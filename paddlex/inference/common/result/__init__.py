@@ -15,6 +15,7 @@
 from .base_result import BaseResult
 from .base_cv_result import BaseCVResult
 from .base_ts_result import BaseTSResult
+from .base_det_3d_result import BaseDet3DResult
 from .mixin import (
     StrMixin,
     JsonMixin,

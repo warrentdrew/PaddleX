@@ -12,23 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .clas import Topk, MultiLabelThreshOutput, NormalizeFeatures
-from .text_det import (
-    DetResizeForTest,
-    NormalizeImage,
-    DBPostProcess,
-    SortBoxes,
-    CropByPolys,
-)
-from .text_rec import (
-    OCRReisizeNormImg,
-    LaTeXOCRReisizeNormImg,
-    CTCLabelDecode,
-    LaTeXOCRDecode,
-)
-from .table_rec import TableLabelDecode
-from .det import DetPostProcess, CropByBoxes, DetPad, WarpAffine
-from .instance_seg import InstanceSegPostProcess
-from .warp import DocTrPostProcess
-from .seg import Map_to_mask
-from .det_3d import Sample, generate_guassian_depth_target, map_pointcloud_to_image
+import numpy as np
+import cv2
+
+from ...common.result import BaseDet3DResult
+
+
+class BEV3DDetResult(BaseDet3DResult):
+
+    def __init__(self, data):
+        super().__init__(data)
+
+    def _to_img(self):
+        image = self._input_img
+        bboxes = self["boxes_3d"]
+        labels = self["labels_3d"]
+        scores = self["scores_3d"]

@@ -12,23 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .clas import Topk, MultiLabelThreshOutput, NormalizeFeatures
-from .text_det import (
-    DetResizeForTest,
-    NormalizeImage,
-    DBPostProcess,
-    SortBoxes,
-    CropByPolys,
-)
-from .text_rec import (
-    OCRReisizeNormImg,
-    LaTeXOCRReisizeNormImg,
-    CTCLabelDecode,
-    LaTeXOCRDecode,
-)
-from .table_rec import TableLabelDecode
-from .det import DetPostProcess, CropByBoxes, DetPad, WarpAffine
-from .instance_seg import InstanceSegPostProcess
-from .warp import DocTrPostProcess
-from .seg import Map_to_mask
-from .det_3d import Sample, generate_guassian_depth_target, map_pointcloud_to_image
+from .base_result import BaseResult
+from .mixin import StrMixin, JsonMixin
+from ...utils.io import ImageWriter
+
+
+class BaseDet3DResult(BaseResult, StrMixin, JsonMixin):
+    """Base class for computer vision results."""
+
+    def __init__(self, data: dict) -> None:
+        """
+        Initialize the BaseCVResult.
+
+        Args:
+            data (dict): The initial data.
+
+        Raises:
+            AssertionError: If the required key (`BaseCVResult.INPUT_IMG_KEY`) are not found in the data.
+        """
+
+        super().__init__(data)
+        StrMixin.__init__(self)
+        JsonMixin.__init__(self)

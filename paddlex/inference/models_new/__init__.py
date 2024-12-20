@@ -43,6 +43,8 @@ from .image_unwarping import WarpPredictor
 # from .formula_recognition import LaTeXOCRPredictor
 # from .face_recognition import FaceRecPredictor
 
+from .bev_detection_3d import BEVDet3DPredictor
+
 
 def _create_hp_predictor(
     model_name, model_dir, device, config, hpi_params, *args, **kwargs

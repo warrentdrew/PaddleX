@@ -14,3 +14,4 @@
 
 from .image_reader import ReadImage
 from .ts_reader import ReadTS
+from .det_3d_reader import ReadNuscenesData
