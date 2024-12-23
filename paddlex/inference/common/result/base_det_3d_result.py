@@ -14,7 +14,6 @@
 
 from .base_result import BaseResult
 from .mixin import StrMixin, JsonMixin
-from ...utils.io import ImageWriter
 
 
 class BaseDet3DResult(BaseResult, StrMixin, JsonMixin):

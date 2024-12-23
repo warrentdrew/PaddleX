@@ -2,7 +2,7 @@ Global:
   model: BEVFusion
   mode: check_dataset # check_dataset/train/evaluate/predict
   dataset_dir: "/paddle/dataset/paddlex/3d/nuscenes"
-  device: gpu:0,1,2,3,4,5,6,7
+  device: gpu:0,1,2,3
   output: "output"
   load_cam_from: /paddle/model/paddlex/3d/camera.pdparams
   load_lidar_from: /paddle/model/paddlex/3d/lidar.pdparams

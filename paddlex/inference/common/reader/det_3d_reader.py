@@ -15,9 +15,69 @@
 import numpy as np
 import cv2
 import os
-
-from ...components import Sample
+from typing import Generic, List, Optional
 import pickle
+
+
+class _EasyDict(dict):
+    def __getattr__(self, key: str):
+        if key in self:
+            return self[key]
+        return super().__getattr__(self, key)
+
+    def __setattr__(self, key: str, value: Generic):
+        self[key] = value
+
+
+class SampleMeta(_EasyDict):
+    """ """
+
+    # yapf: disable
+    __slots__ = [
+        "camera_intrinsic",
+        # bgr or rgb
+        "image_format",
+        # pillow or cv2
+        "image_reader",
+        # chw or hwc
+        "channel_order",
+        # Unique ID of the sample
+        "id",
+        "time_lag",
+        "ref_from_curr"
+    ]
+    # yapf: enable
+
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+
+class Sample(_EasyDict):
+    """ """
+
+    _VALID_MODALITIES = ["image", "lidar", "radar", "multimodal", "multiview"]
+
+    def __init__(self, path: str, modality: str):
+        if modality not in self._VALID_MODALITIES:
+            raise ValueError(
+                "Only modality {} is supported, but got {}".format(
+                    self._VALID_MODALITIES, modality
+                )
+            )
+
+        self.meta = SampleMeta()
+
+        self.path = path
+        self.data = None
+        self.modality = modality.lower()
+
+        self.bboxes_2d = None
+        self.bboxes_3d = None
+        self.labels = None
+
+        self.sweeps = []
+        self.attrs = None
 
 
 class ReadNuscenesData:

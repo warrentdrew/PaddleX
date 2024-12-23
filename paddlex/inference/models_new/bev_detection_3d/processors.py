@@ -21,7 +21,7 @@ import lazy_paddle as paddle
 
 from ...utils.io import ImageReader
 from ....utils import logging
-from ...components import Sample
+from ...common.reader.det_3d_reader import Sample
 
 
 cv2_interp_codes = {

@@ -18,7 +18,6 @@ import math
 
 import numpy as np
 import lazy_paddle as paddle
-from lazy_paddle.distribution import Normal
 
 
 class _EasyDict(dict):
@@ -82,7 +81,7 @@ class Sample(_EasyDict):
         self.attrs = None
 
 
-class NormalCustom(Normal):
+class NormalCustom(paddle.distribution.Normal):
     def __init__(self, loc, scale, name=None):
         super(NormalCustom, self).__init__(loc, scale, name)
 

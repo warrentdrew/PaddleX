@@ -42,7 +42,7 @@ class BEVDet3DPredictor(BasicPredictor):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.pre_tfs, self.infer, self.post_op = self._build()
+        self.pre_tfs, self.infer = self._build()
 
     def _build_batch_sampler(self):
         return Det3DBatchSampler()
@@ -65,9 +65,8 @@ class BEVDet3DPredictor(BasicPredictor):
             model_prefix=self.MODEL_FILE_PREFIX,
             option=self.pp_option,
         )
-        post_op = {}
 
-        return pre_tfs, infer, post_op
+        return pre_tfs, infer
 
     def _format_output(self, infer_input, outs, sample_id):
         """format inference input and output into predict result"""

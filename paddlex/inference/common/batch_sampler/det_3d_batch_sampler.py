@@ -21,10 +21,10 @@ import pickle
 from ....utils import logging
 from ....utils.download import download
 from ....utils.cache import CACHE_DIR
-from .image_batch_sampler import ImageBatchSampler
+from .base_batch_sampler import BaseBatchSampler
 
 
-class Det3DBatchSampler(ImageBatchSampler):
+class Det3DBatchSampler(BaseBatchSampler):
 
     def __init__(self, sample_ids=[0]):
         self.sample_ids = sample_ids
