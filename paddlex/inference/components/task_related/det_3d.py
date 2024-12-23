@@ -18,7 +18,6 @@ import math
 
 import numpy as np
 import lazy_paddle as paddle
-import lazy_paddle.nn.functional as F
 from lazy_paddle.distribution import Normal
 
 
@@ -91,52 +90,6 @@ class NormalCustom(Normal):
         return 0.5 * (
             1 + paddle.erf((value - self.loc) * self.scale.reciprocal() / math.sqrt(2))
         )
-
-
-def generate_guassian_depth_target(depth, stride, cam_depth_range, constant_std=None):
-    """Generate guassian distribution depth
-    This code is based on https://github.com/ADLab-AutoDrive/BEVFusion/blob/3f992837ad659f050df38d7b0978372425be16ff/mmdet3d/core/utils/gaussian.py#L90
-    """
-    B, tH, tW = depth.shape
-    kernel_size = stride
-    H = tH // stride
-    W = tW // stride
-    unfold_depth = F.unfold(
-        depth.unsqueeze(1), kernel_size, dilations=1, paddings=0, strides=stride
-    )  # B, Cxkxk, HxW
-    unfold_depth = unfold_depth.reshape([B, -1, H, W]).transpose(
-        [0, 2, 3, 1]
-    )  # B, H, W, kxk
-    valid_mask = unfold_depth != 0  # BN, H, W, kxk
-
-    valid_mask_f = valid_mask.astype("float32")  # BN, H, W, kxk
-    valid_num = paddle.sum(valid_mask_f, axis=-1)  # BN, H, W
-    valid_num[valid_num == 0] = 1e10
-    if constant_std is None:
-        mean = paddle.sum(unfold_depth, axis=-1) / valid_num
-        var_sum = paddle.sum(
-            ((unfold_depth - mean.unsqueeze(-1)) ** 2) * valid_mask_f, axis=-1
-        )  # BN, H, W
-        std_var = paddle.sqrt(var_sum / valid_num)
-        std_var[valid_num == 1] = 1  # set std_var to 1 when only one point in patch
-    else:
-        std_var = paddle.ones([B, H, W], dtype="float32") * constant_std
-
-    unfold_depth[~valid_mask] = 1e10
-    min_depth = paddle.min(unfold_depth, axis=-1)  # BN, H, W
-    min_depth[min_depth == 1e10] = 0
-
-    x = paddle.arange(cam_depth_range[0], cam_depth_range[1] + 1, cam_depth_range[2])
-    dist = NormalCustom(
-        min_depth / cam_depth_range[2], std_var / cam_depth_range[2]
-    )  # BN, H, W, D
-    cdfs = []
-    for i in x:
-        cdf = dist.cdf(i)
-        cdfs.append(cdf)
-    cdfs = paddle.stack(cdfs, axis=-1)
-    depth_dist = cdfs[..., 1:] - cdfs[..., :-1]
-    return depth_dist, min_depth, std_var
 
 
 def translate(points: np.ndarray, x: np.ndarray) -> None:

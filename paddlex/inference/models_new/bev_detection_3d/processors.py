@@ -21,11 +21,7 @@ import lazy_paddle as paddle
 
 from ...utils.io import ImageReader
 from ....utils import logging
-from ...components import (
-    Sample,
-    map_pointcloud_to_image,
-    generate_guassian_depth_target,
-)
+from ...components import Sample
 
 
 cv2_interp_codes = {
@@ -303,28 +299,6 @@ class LoadMultiViewImageFromFiles:
             to_rgb=False,
         )
         sample["img_fields"] = ["img"]
-
-        if self.project_pts_to_img_depth:
-            sample["img_depth"] = []
-            for i in range(len(sample["img"])):
-                depth = map_pointcloud_to_image(
-                    sample["points"],
-                    sample["img"][i],
-                    sample["caminfo"][i]["sensor2lidar_rotation"],
-                    sample["caminfo"][i]["sensor2lidar_translation"],
-                    sample["caminfo"][i]["cam_intrinsic"],
-                    show=False,
-                )
-                guassian_depth, min_depth, std_var = generate_guassian_depth_target(
-                    paddle.to_tensor(depth).unsqueeze(0),
-                    stride=8,
-                    cam_depth_range=self.cam_depth_range,
-                    constant_std=self.constant_std,
-                )
-                depth = paddle.concat(
-                    [min_depth[0].unsqueeze(-1), guassian_depth[0]], axis=-1
-                )
-                sample["img_depth"].append(depth)
         return sample
 
 

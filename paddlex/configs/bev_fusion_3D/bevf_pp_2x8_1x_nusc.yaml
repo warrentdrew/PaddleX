@@ -31,6 +31,6 @@ Export:
 Predict:
   batch_size: 1
   model_dir: "output_bevfusion"
-  input: "https://paddle-model-ecology.bj.bcebos.com/det_3d/demo_det_3d/nuscenes_annotation_val.pkl"
+  input: "https://paddle-model-ecology.bj.bcebos.com/paddlex/det_3d/demo_det_3d/nuscenes_annotation_val.pkl"
   kernel_option:
     run_mode: paddle
