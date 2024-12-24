@@ -15,7 +15,7 @@
 import numpy as np
 import cv2
 import os
-from typing import Generic, List, Optional
+from typing import Generic, List, Optional, Any, Dict
 import pickle
 
 
@@ -107,8 +107,6 @@ class ReadNuscenesData:
 
     def get_data_info(self, info):
         """Get data info.
-        Args:
-            # index (int): Index of the sample data to get. read all indexes
 
         Returns:
             dict: Data information that will be passed to the data \

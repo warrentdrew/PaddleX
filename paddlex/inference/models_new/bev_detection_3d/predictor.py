@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Any, Union, Dict, List, Tuple
+
 from ....utils.func_register import FuncRegister
 from ....modules.bev_fusion_3D.model_list import MODELS
 from ...common.batch_sampler import Det3DBatchSampler
@@ -34,23 +36,45 @@ from ....ops.iou3d_nms import nms_gpu
 
 
 class BEVDet3DPredictor(BasicPredictor):
+    """BEVDet3DPredictor that inherits from BasicPredictor."""
 
     entities = MODELS
 
     _FUNC_MAP = {}
     register = FuncRegister(_FUNC_MAP)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: List, **kwargs: Dict) -> None:
+        """Initializes BEVDet3DPredictor.
+
+        Args:
+            *args: Arbitrary positional arguments passed to the superclass.
+            **kwargs: Arbitrary keyword arguments passed to the superclass.
+        """
         super().__init__(*args, **kwargs)
         self.pre_tfs, self.infer = self._build()
 
-    def _build_batch_sampler(self):
+    def _build_batch_sampler(self) -> Det3DBatchSampler:
+        """Builds and returns an Det3DBatchSampler instance.
+
+        Returns:
+            Det3DBatchSampler: An instance of Det3DBatchSampler.
+        """
         return Det3DBatchSampler()
 
-    def _get_result_class(self):
+    def _get_result_class(self) -> type:
+        """Returns the result class, BEV3DDetResult.
+
+        Returns:
+            type: The BEV3DDetResult class.
+        """
         return BEV3DDetResult
 
-    def _build(self):
+    def _build(self) -> Tuple:
+        """Build the preprocessors and inference engine based on the configuration.
+
+        Returns:
+            tuple: A tuple containing the preprocessors and inference engine.
+        """
         pre_tfs = {"Read": ReadNuscenesData()}
         for cfg in self.config["PreProcess"]["transform_ops"]:
             tf_key = list(cfg.keys())[0]
@@ -68,8 +92,19 @@ class BEVDet3DPredictor(BasicPredictor):
 
         return pre_tfs, infer
 
-    def _format_output(self, infer_input, outs, sample_id):
-        """format inference input and output into predict result"""
+    def _format_output(
+        self, infer_input: List[Any], outs: List[Any], sample_id: str
+    ) -> Dict[str, Any]:
+        """format inference input and output into predict result
+
+        Args:
+            infer_input(List): Model infer inputs with list containing images, points and lidar2img matrix.
+            outs(List): Model infer output containing bboxes, scores, labels result.
+            sample_id(str): Token id of input sample.
+
+        Returns:
+            Dict: A Dict containing formatted inference output results.
+        """
         results = {}
         out_bboxes_3d = []
         out_scores_3d = []
@@ -94,7 +129,16 @@ class BEVDet3DPredictor(BasicPredictor):
         results["scores_3d"] = out_scores_3d
         return results
 
-    def process(self, batch_data):
+    def process(self, batch_data: List[str]) -> Dict[str, Any]:
+        """
+        Process a batch of data through the preprocessing and inference.
+
+        Args:
+            batch_data (List[str]): A batch of input data (e.g., sample anno file paths).
+
+        Returns:
+            dict: A dictionary containing the input path, input img, input points, input lidar2img, output bboxes, output labels, output scores and label names. Keys include 'input_path', 'input_img', 'input_points', 'input_lidar2img', 'boxes_3d', 'labels_3d' and 'scores_3d'.
+        """
         sample = self.pre_tfs["Read"](batch_data=batch_data)
         sample = self.pre_tfs["LoadPointsFromFile"](results=sample[0])
         sample = self.pre_tfs["LoadPointsFromMultiSweeps"](results=sample)

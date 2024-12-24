@@ -17,6 +17,7 @@ import ast
 from pathlib import Path
 import numpy as np
 import pickle
+from typing import Any, Dict, List, Optional, Union
 
 from ....utils import logging
 from ....utils.download import download
@@ -30,13 +31,13 @@ class Det3DBatchSampler(BaseBatchSampler):
         self.sample_ids = sample_ids
 
     # XXX: auto download for url
-    def _download_from_url(self, in_path):
+    def _download_from_url(self, in_path: str) -> str:
         file_name = Path(in_path).name
         save_path = Path(CACHE_DIR) / "predict_input" / file_name
         download(in_path, save_path, overwrite=True)
         return save_path.as_posix()
 
-    def load_annotations(self, ann_file):
+    def load_annotations(self, ann_file: str) -> List[Dict]:
         """Load annotations from ann_file.
 
         Args:
@@ -49,7 +50,7 @@ class Det3DBatchSampler(BaseBatchSampler):
         data_infos = list(sorted(data["infos"], key=lambda e: e["timestamp"]))
         return data_infos
 
-    def sample(self, inputs):
+    def sample(self, inputs: Union[List[str], str]):
         if not isinstance(inputs, list):
             inputs = [inputs]
 
@@ -72,7 +73,7 @@ class Det3DBatchSampler(BaseBatchSampler):
         if len(batch) > 0:
             yield batch
 
-    def _rand_batch(self, data_size):
+    def _rand_batch(self, data_size: int) -> List[Any]:
         raise NotImplementedError(
             "rand batch is not supported for 3D detection annotation data"
         )

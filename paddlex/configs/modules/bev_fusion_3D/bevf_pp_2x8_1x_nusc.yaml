@@ -1,6 +1,6 @@
 Global:
   model: BEVFusion
-  mode: check_dataset # check_dataset/train/evaluate/predict
+  mode: check_dataset
   dataset_dir: "/paddle/dataset/paddlex/3d/nuscenes"
   device: gpu:0,1,2,3
   output: "output"
