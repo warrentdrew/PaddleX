@@ -27,15 +27,32 @@ from .base_batch_sampler import BaseBatchSampler
 
 class Det3DBatchSampler(BaseBatchSampler):
 
-    def __init__(self, sample_ids=[0]):
-        self.sample_ids = sample_ids
-
     # XXX: auto download for url
     def _download_from_url(self, in_path: str) -> str:
         file_name = Path(in_path).name
         save_path = Path(CACHE_DIR) / "predict_input" / file_name
         download(in_path, save_path, overwrite=True)
         return save_path.as_posix()
+
+    @property
+    def batch_size(self) -> int:
+        """Gets the batch size."""
+        return self._batch_size
+
+    @batch_size.setter
+    def batch_size(self, batch_size: int) -> None:
+        """Sets the batch size.
+
+        Args:
+            batch_size (int): The batch size to set.
+
+        Raises:
+            AssertionError: If the batch size is not equal to 1.
+        """
+        assert (
+            batch_size == 1
+        ), "inference for 3D models only support batch_size equal to 1"
+        self._batch_size = batch_size
 
     def load_annotations(self, ann_file: str) -> List[Dict]:
         """Load annotations from ann_file.
@@ -54,7 +71,7 @@ class Det3DBatchSampler(BaseBatchSampler):
         if not isinstance(inputs, list):
             inputs = [inputs]
 
-        batch = []
+        sample_set = []
         for input in inputs:
             if isinstance(input, str):
                 ann_path = (
@@ -67,9 +84,15 @@ class Det3DBatchSampler(BaseBatchSampler):
                     f"Not supported input data type! Only `str` is supported! So has been ignored: {input}."
                 )
             self.data_infos = self.load_annotations(ann_path)
-            batch.extend(self.data_infos)
+            sample_set.extend(self.data_infos)
 
-        batch = [batch[i] for i in self.sample_ids]
+        batch = []
+        for sample in sample_set:
+            batch.append(sample)
+            if len(batch) == self.batch_size:
+                yield batch
+                batch = []
+
         if len(batch) > 0:
             yield batch
 

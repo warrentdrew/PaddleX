@@ -84,7 +84,7 @@ class ReadNuscenesData:
 
     def __init__(
         self,
-        dataset_root="data/nuscenes",
+        dataset_root="",
         load_interval=1,
         noise_sensor_type="camera",
         drop_frames=False,

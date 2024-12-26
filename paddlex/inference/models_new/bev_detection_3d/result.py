@@ -12,8 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ...common.result import BaseDet3DResult
+from ...common.result import BaseResult, StrMixin, JsonMixin
 
 
-class BEV3DDetResult(BaseDet3DResult):
-    pass
+class BEV3DDetResult(BaseResult, StrMixin, JsonMixin):
+    """Base class for computer vision results."""
+
+    def __init__(self, data: dict) -> None:
+        """
+        Initialize the BaseCVResult.
+
+        Args:
+            data (dict): The initial data.
+
+        Raises:
+            AssertionError: If the required key (`BaseCVResult.INPUT_IMG_KEY`) are not found in the data.
+        """
+
+        super().__init__(data)
+        StrMixin.__init__(self)
+        JsonMixin.__init__(self)
