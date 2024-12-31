@@ -30,7 +30,6 @@ class _EasyDict(dict):
 
 
 class SampleMeta(_EasyDict):
-    """ """
 
     # yapf: disable
     __slots__ = [
@@ -54,7 +53,7 @@ class SampleMeta(_EasyDict):
 
 
 class Sample(_EasyDict):
-    """ """
+    """Data structure containing sample data information"""
 
     _VALID_MODALITIES = ["image", "lidar", "radar", "multimodal", "multiview"]
 
@@ -237,5 +236,4 @@ class ReadNuscenesData:
         return sample
 
     def __call__(self, batch_data):
-        """apply"""
         return [self.prepare_test_data(data_info) for data_info in batch_data]

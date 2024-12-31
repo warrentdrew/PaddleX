@@ -45,13 +45,11 @@ class Det3DBatchSampler(BaseBatchSampler):
 
         Args:
             batch_size (int): The batch size to set.
-
-        Raises:
-            AssertionError: If the batch size is not equal to 1.
         """
-        assert (
-            batch_size == 1
-        ), "inference for 3D models only support batch_size equal to 1"
+        if batch_size != 1:
+            logging.warning(
+                "inference for 3D models only support batch_size equal to 1"
+            )
         self._batch_size = batch_size
 
     def load_annotations(self, ann_file: str) -> List[Dict]:
