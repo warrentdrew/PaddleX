@@ -110,3 +110,9 @@ from .bev_fusion_3D import (
     BEVFusionEvaluator,
     BEVFusionExportor,
 )
+from .video_classification import (
+    VideoClsDatasetChecker,
+    VideoClsTrainer,
+    VideoClsEvaluator,
+    VideoClsExportor,
+)

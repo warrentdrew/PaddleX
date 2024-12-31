@@ -25,7 +25,7 @@ REPO_NAMES = [
     "PaddleSeg",
     "PaddleNLP",
     "PaddleTS",
-    "Paddle3D"
+    "Paddle3D" "PaddleVideo",
 ]
 
 REPO_META = {
@@ -140,8 +140,21 @@ REPO_META = {
         "pdx_pkg_name": "Paddle3D_api",
         "editable": False,
         "path_env": "PADDLE_PDX_PADDLE3D_PATH",
-        'requires': ['PaddleSeg', 'PaddleDetection'],
-        'pdx_pkg_deps': ['nuscenes-devkit', 'pyquaternion'],
+        "requires": ["PaddleSeg", "PaddleDetection"],
+        "pdx_pkg_deps": ["nuscenes-devkit", "pyquaternion"],
+    },
+    "PaddleVideo": {
+        "git_path": "/PaddlePaddle/PaddleVideo.git",
+        "platform": "github",
+        "branch": "develop",
+        "pkg_name": "paddlevideo",
+        "lib_name": "ppvideo",
+        "pdx_pkg_name": "PaddleVideo_api",
+        "editable": False,
+        "extra_req_files": [
+            "requirements_paddlex.txt",
+        ],
+        "path_env": "PADDLE_PDX_PADDLEVIDEO_PATH",
     },
 }
 
