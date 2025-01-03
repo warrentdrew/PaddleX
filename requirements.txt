@@ -37,3 +37,13 @@ unstructured
 networkx
 faiss-cpu
 decord==0.6.0
+######## For BEVFusion #######
+easydict
+numba >= 0.56
+nuscenes-devkit
+pyquaternion
+rarfile
+visualdl
+h5py
+einops
+albumentations
