@@ -47,3 +47,10 @@ visualdl
 h5py
 einops
 albumentations
+######## For NLP Tokenizer #######
+jieba
+sentencepiece
+jinja2
+regex
+######## For Speech #######
+soundfile
