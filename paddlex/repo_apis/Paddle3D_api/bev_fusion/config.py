@@ -18,12 +18,16 @@ from ..pp3d_config import PP3DConfig
 
 
 class BEVFusionConfig(PP3DConfig):
-    def update_dataset(self, dataset_dir, dataset_type=None, *, version=None):
+    def update_dataset(
+        self, dataset_dir, datart_prefix=True, dataset_type=None, *, version=None
+    ):
         dataset_dir = abspath(dataset_dir)
         if dataset_type is None:
             dataset_type = "NuscenesMMDataset"
         if dataset_type == "NuscenesMMDataset":
-            ds_cfg = self._make_nuscenes_mm_dataset_config(dataset_dir, version=version)
+            ds_cfg = self._make_nuscenes_mm_dataset_config(
+                dataset_dir, datart_prefix, version=version
+            )
         else:
             raise ValueError(f"{dataset_type} is not supported.")
         # Prune old config
@@ -36,7 +40,9 @@ class BEVFusionConfig(PP3DConfig):
                 self.val_dataset.pop(key)
         self.update(ds_cfg)
 
-    def _make_nuscenes_mm_dataset_config(self, dataset_root_path, version):
+    def _make_nuscenes_mm_dataset_config(
+        self, dataset_root_path, datart_prefix, version
+    ):
         if version is None:
             # Default version
             version = "trainval"
@@ -54,12 +60,14 @@ class BEVFusionConfig(PP3DConfig):
                 "data_root": dataset_root_path,
                 "ann_file": f"{dataset_root_path}/nuscenes_infos_train.pkl",
                 "mode": train_mode,
+                "datart_prefix": datart_prefix,
             },
             "val_dataset": {
                 "type": "NuscenesMMDataset",
                 "data_root": dataset_root_path,
                 "ann_file": f"{dataset_root_path}/nuscenes_infos_val.pkl",
                 "mode": val_mode,
+                "datart_prefix": datart_prefix,
             },
         }
 

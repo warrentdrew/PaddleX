@@ -22,16 +22,22 @@ from .model_list import MODELS
 
 
 class BEVFusionTrainer(BaseTrainer):
-    """Object Detection Model Trainer"""
+    """3D BEV Detection Model Trainer"""
 
     entities = MODELS
 
     def _update_dataset(self):
         """update dataset settings"""
-        self.pdx_config.update_dataset(self.global_config.dataset_dir, "NuscenesMMDataset")
+        self.pdx_config.update_dataset(
+            self.global_config.dataset_dir,
+            self.global_config.get("datart_prefix", True),
+            "NuscenesMMDataset",
+        )
 
     def _update_pretrained_model(self):
-        self.pdx_config.update_pretrained_model(self.global_config.load_cam_from, self.global_config.load_lidar_from)
+        self.pdx_config.update_pretrained_model(
+            self.global_config.load_cam_from, self.global_config.load_lidar_from
+        )
 
     def update_config(self):
         """update training config"""
@@ -42,11 +48,13 @@ class BEVFusionTrainer(BaseTrainer):
             self.pdx_config.update_batch_size(self.train_config.batch_size)
         if self.train_config.learning_rate is not None:
             self.pdx_config.update_learning_rate(self.train_config.learning_rate)
-        if self.train_config.epochs is not None:
-            self.pdx_config.update_epochs(self.train_config.epochs)
-            epochs = self.train_config.epochs
+        # if self.train_config.epochs is not None:
+        #     self.pdx_config.update_epochs(self.train_config.epochs)
+        if self.train_config.epochs_iters is not None:
+            self.pdx_config.update_epochs(self.train_config.epochs_iters)
+            epochs_iters = self.train_config.epochs_iters
         else:
-            epochs = self.pdx_config.get_epochs()
+            epochs_iters = self.pdx_config.get_epochs_iters()
         if self.global_config.output is not None:
             self.pdx_config.update_save_dir(self.global_config.output)
 

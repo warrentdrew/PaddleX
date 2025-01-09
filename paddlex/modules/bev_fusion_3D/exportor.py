@@ -17,6 +17,6 @@ from .model_list import MODELS
 
 
 class BEVFusionExportor(BaseExportor):
-    """Object Detection Model Exportor"""
+    """3D BEV Detection Model Exportor"""
 
     entities = MODELS

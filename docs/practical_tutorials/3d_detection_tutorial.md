@@ -22,27 +22,23 @@ PaddleX 提供了 1 个端到端的3D检测模型，具体可参考 [模型列�
 ## 4. 数据准备和校验
 ### 4.1 数据准备
 
-本教程采用 `nuScenes`数据集 作为示例数据集，请在[官网](https://www.nuscenes.org/nuscenes)进行下载，将数据集目录准备如下：
+本教程采用基于 `nuScenes`数据集提取的demo数据集作为示例数据集，数据集下载路径和准备方式如下
 
-```
-nuscenes_dataset_root
-|-- can_bus
-|—— samples  
-|—— sweeps  
-|—— maps  
-|—— v1.0-trainval  
-```
-
-在`./paddlex/repo_manager/repos/Paddle3D`的目录下创建软链接 `data/nuscenes`，指向到上面的数据集目录：
 ```bash
 cd /path/to/paddlex
-cd paddlex/repo_manager/repos/Paddle3D
-mkdir data
-ln -s /path/to/nuscenes_dataset_root ./data
-mv ./data/nuscenes_dataset_root ./data/nuscenes
+wget https://paddle-model-ecology.bj.bcebos.com/paddlex/data/nuscenes_demo.tar -P ./dataset
+tar -xf ./dataset/nuscenes_demo.tar -C ./dataset/
 ```
 
-为加速训练过程中Nuscenes数据集的加载和解析，需要事先将Nuscenes数据集里的标注信息存储在`pkl`后缀文件，请下载预先生成好的`pkl`文件[train_infos.pkl](https://paddle3d.bj.bcebos.com/models/bevfusion/nuscenes_infos_train.pkl)，[val_infos.pkl](https://paddle3d.bj.bcebos.com/models/bevfusion/nuscenes_infos_val.pkl)放在`./data/nuscenes`目录下。
+将数据集目录准备如下：
+```
+dataset
+|—— samples
+|—— sweeps
+|—— nuscenes_infos_train.pkl
+|—— nuscenes_infos_val.pkl
+```
+
 
 ### 4.2 数据集校验
 
@@ -107,22 +103,12 @@ python main.py -c paddlex/configs/bev_fusion_3D/bevf_pp_2x8_1x_nusc.yaml \
 
 在训练之前，请确保您已经对数据集进行了校验。
 
-BEVFusion模型训练需要加载camera分支模型预训练分支和lidar分支模型预训练权重：
-```bash
-wget https://paddle3d.bj.bcebos.com/models/bevfusion/camera/model.pdparams
-mv model.pdparams camera.pdparams
-wget https://paddle3d.bj.bcebos.com/models/bevfusion/lidar/model.pdparams
-mv model.pdparams lidar.pdparams
-```
-
 完成 PaddleX 模型的训练，只需如下一条命令：
 
 ```bash
-python main.py -c paddlex/configs/bev_fusion_3D/bevf_pp_2x8_1x_nusc.yaml \
+python main.py -c paddlex/configs/modules/bev_fusion_3D/bevf_pp_2x8_1x_nusc.yaml \
     -o Global.mode=train \
-    -o Global.dataset_dir=./paddlex/repo_manager/repos/Paddle3D/data/nuscenes \
-    -o Global.load_cam_from=camera_pdparams_path \
-    -o Global.load_lidar_from=lidar_pdparams_path
+    -o Global.dataset_dir=./paddlex/repo_manager/repos/Paddle3D/dataset/nuscenes \
 ```
 
 在 PaddleX 中模型训练支持：修改训练超参数、单机单卡/多卡训练等功能，只需修改配置文件或追加命令行参数。

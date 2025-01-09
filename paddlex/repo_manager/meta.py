@@ -25,7 +25,8 @@ REPO_NAMES = [
     "PaddleSeg",
     "PaddleNLP",
     "PaddleTS",
-    "Paddle3D" "PaddleVideo",
+    "Paddle3D",
+    "PaddleVideo",
 ]
 
 REPO_META = {

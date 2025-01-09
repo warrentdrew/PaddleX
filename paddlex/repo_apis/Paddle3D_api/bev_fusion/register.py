@@ -22,7 +22,7 @@ from .runner import BEVFusionRunner
 from .config import BEVFusionConfig
 
 REPO_ROOT_PATH = os.environ.get("PADDLE_PDX_PADDLE3D_PATH")
-UAPI_CONFIG_DIR = osp.abspath(osp.join(osp.dirname(__file__), "..", "configs"))
+PDX_CONFIG_DIR = osp.abspath(osp.join(osp.dirname(__file__), "..", "configs"))
 
 register_suite_info(
     {
@@ -39,9 +39,9 @@ register_model_info(
         "model_name": "BEVFusion",
         "suite": "BEVFusion",
         "config_path": osp.join(
-            UAPI_CONFIG_DIR, "bevfusion", "bevf_pp_2x8_1x_nusc.yaml"
+            PDX_CONFIG_DIR, "bevfusion", "bevf_pp_2x8_1x_nusc.yaml"
         ),
-        "auto_compression_config_path": osp.join(UAPI_CONFIG_DIR, "None"),
+        "auto_compression_config_path": osp.join(PDX_CONFIG_DIR, "None"),
         "supported_apis": ["train", "evaluate", "export", "infer"],
         "supported_train_opts": {
             "device": ["cpu", "gpu_nxcx"],

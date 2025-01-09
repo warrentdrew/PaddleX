@@ -105,6 +105,14 @@ class BEVFusionModel(BaseModel):
 
         self._assert_empty_kwargs(kwargs)
 
+        # PDX related settings
+        uniform_output_enabled = kwargs.pop("uniform_output_enabled", True)
+        export_with_pir = kwargs.pop("export_with_pir", False)
+        config.update({"uniform_output_enabled": uniform_output_enabled})
+        config.update({"pdx_model_name": self.name})
+        if export_with_pir:
+            config.update({"export_with_pir": export_with_pir})
+
         with self._create_new_config_file() as config_path:
             config.dump(config_path)
             return self.runner.train(
@@ -147,6 +155,14 @@ class BEVFusionModel(BaseModel):
             cli_args.append(CLIArgument("--num_workers", num_workers))
 
         self._assert_empty_kwargs(kwargs)
+
+        # PDX related settings
+        uniform_output_enabled = kwargs.pop("uniform_output_enabled", True)
+        export_with_pir = kwargs.pop("export_with_pir", False)
+        config.update({"uniform_output_enabled": uniform_output_enabled})
+        config.update({"pdx_model_name": self.name})
+        if export_with_pir:
+            config.update({"export_with_pir": export_with_pir})
 
         with self._create_new_config_file() as config_path:
             config.dump(config_path)
