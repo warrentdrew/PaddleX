@@ -21,7 +21,7 @@ from ...models_new.bev_detection_3d.result import BEV3DDetResult
 
 
 class BEVDet3DPipeline(BasePipeline):
-    """Image Classification Pipeline"""
+    """3D Detection Pipeline"""
 
     entities = "bev_detection_3d"
 
@@ -53,7 +53,7 @@ class BEVDet3DPipeline(BasePipeline):
     def predict(
         self, input: str | list[str] | np.ndarray | list[np.ndarray], **kwargs
     ) -> BEV3DDetResult:
-        """Predicts image classification results for the given input.
+        """Predicts 3D detection results for the given input.
 
         Args:
             input (str | list[str] | np.ndarray | list[np.ndarray]): The input path(s) to the 3d annotation pickle file.
