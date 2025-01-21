@@ -17,7 +17,7 @@ comments: true
 <th>介绍</th>
 </tr>
 <tr>
-<td>BEVFusion</td><td><a href="https://paddle-model-ecology.bj.bcebos.com/paddlex/official_inference_model/paddle3.0b2/BEVFusion.tar">推理模型</a>/<a href="https://paddle-model-ecology.bj.bcebos.com/paddlex/official_pretrained_model/BEVFusion.pdparams">训练模型</a></td>
+<td>BEVFusion</td><td><a href="https://paddle-model-ecology.bj.bcebos.com/paddlex/official_inference_model/paddle3.0b2/BEVFusion_infer.tar">推理模型</a>/<a href="https://paddle-model-ecology.bj.bcebos.com/paddlex/official_pretrained_model/BEVFusion_pretrained.pdparams">训练模型</a></td>
 <td>53.9</td>
 <td>60.9</td>
 
@@ -51,7 +51,16 @@ for res in output:
 运行后，得到的结果为：
 ```bash
 {
-    "input_path": "d8251bbc2105497ab8ec80827d4429aa",
+    'input_path': 'samples/LIDAR_TOP/n015-2018-10-08-15-36-50+0800__LIDAR_TOP__1538984253447765.pcd.bin',
+    'sample_id': 'b4ff30109dd14c89b24789dc5713cf8c',
+    'input_img_paths': [
+      'samples/CAM_FRONT_LEFT/n015-2018-10-08-15-36-50+0800__CAM_FRONT_LEFT__1538984253404844.jpg',
+      'samples/CAM_FRONT/n015-2018-10-08-15-36-50+0800__CAM_FRONT__1538984253412460.jpg',
+      'samples/CAM_FRONT_RIGHT/n015-2018-10-08-15-36-50+0800__CAM_FRONT_RIGHT__1538984253420339.jpg',
+      'samples/CAM_BACK_RIGHT/n015-2018-10-08-15-36-50+0800__CAM_BACK_RIGHT__1538984253427893.jpg',
+      'samples/CAM_BACK/n015-2018-10-08-15-36-50+0800__CAM_BACK__1538984253437525.jpg',
+      'samples/CAM_BACK_LEFT/n015-2018-10-08-15-36-50+0800__CAM_BACK_LEFT__1538984253447423.jpg'
+    ]
     "boxes_3d": [
         [
             14.5425386428833,
@@ -75,8 +84,19 @@ for res in output:
 ```
 
 运行结果参数含义如下：
-- `input_path`：表示输入待预测样本的唯一标识符token_id
-- `boxes_3d`：表示该3D样本的所有预测框信息
+- `input_path`：表示输入待预测样本的输入点云数据路径
+- `sample_id`：表示输入待预测样本的输入样本的唯一标识符
+- `input_img_paths`：表示输入待预测样本的输入图像数据路径
+- `boxes_3d`：表示该3D样本的所有预测框信息, 每个预测框信息为一个长度为9的列表, 各元素分别表示：
+  - 0: 中心点x坐标
+  - 1: 中心点y坐标
+  - 2: 中心点z坐标
+  - 3: 检测框宽度
+  - 4: 检测框长度
+  - 5: 检测框高度
+  - 6: 旋转角度
+  - 7: 坐标系x方向速度
+  - 8: 坐标系y方向速度
 - `labels_3d`：表示该3D样本的所有预测框对应的预测类别
 - `scores_3d`：表示文该3D样本的所有预测框对应的置信度
 
@@ -250,11 +270,12 @@ python main.py -c paddlex/configs/modules/bev_fusion_3D/bevf_pp_2x8_1x_nusc.yaml
   &quot;done_flag&quot;: true,
   &quot;check_pass&quot;: true,
   &quot;attributes&quot;: {
+    &quot;num_classes&quot;: 11,
     &quot;train_mate&quot;: [
       {
         &quot;sample_idx&quot;: &quot;f9878012c3f6412184c294c13ba4bac3&quot;,
         &quot;lidar_path&quot;: &quot;./data/nuscenes/samples/LIDAR_TOP/n008-2018-05-21-11-06-59-0400__LIDAR_TOP__1526915243047392.pcd.bin&quot;,
-        &quot;image_paths"&quot; [
+        &quot;image_paths&quot; [
           &quot;./data/nuscenes/samples/CAM_FRONT_LEFT/n008-2018-05-21-11-06-59-0400__CAM_FRONT_LEFT__1526915243004917.jpg&quot;,
           &quot;./data/nuscenes/samples/CAM_FRONT/n008-2018-05-21-11-06-59-0400__CAM_FRONT__1526915243012465.jpg&quot;,
           &quot;./data/nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-05-21-11-06-59-0400__CAM_FRONT_RIGHT__1526915243019956.jpg&quot;,
@@ -279,7 +300,9 @@ python main.py -c paddlex/configs/modules/bev_fusion_3D/bevf_pp_2x8_1x_nusc.yaml
       },
     ]
   },
-  &quot;analysis&quot;: {},
+  &quot;analysis&quot;: {
+    &quot;histogram&quot;: &quot;check_dataset/histogram.png&quot;
+  },
   &quot;dataset_path&quot;: &quot;/workspace/bevfusion/Paddle3D/data/nuscenes&quot;,
   &quot;show_type&quot;: &quot;path for images and lidar&quot;,
   &quot;dataset_type&quot;: &quot;NuscenesMMDataset&quot;
