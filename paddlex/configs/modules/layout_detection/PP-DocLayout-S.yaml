@@ -1,7 +1,7 @@
 Global:
-  model: PP-YOLOE-R_L
+  model: PP-DocLayout-S
   mode: check_dataset # check_dataset/train/evaluate/predict
-  dataset_dir: "dataset/rdet_dota_examples"
+  dataset_dir: "/paddle/dataset/paddlex/layout/det_layout_examples"
   device: gpu:0,1,2,3
   output: "output"
 
@@ -15,26 +15,26 @@ CheckDataset:
     val_percent: null
 
 Train:
-  num_classes: 15
-  epochs_iters: 10
+  num_classes: 11
+  epochs_iters: 100
   batch_size: 1
-  learning_rate: 0.128
-  pretrain_weight_path: https://paddledet.bj.bcebos.com/models/pretrained/CSPResNetb_l_pretrained.pdparams
+  learning_rate: 0.0001
+  pretrain_weight_path: https://paddle-model-ecology.bj.bcebos.com/paddlex/official_pretrained_model/PP-DocLayout-S_pretrain.pdparams
   warmup_steps: 100
   resume_path: null
   log_interval: 10
-  eval_interval: 5
+  eval_interval: 1
 
 Evaluate:
   weight_path: "output/best_model/best_model.pdparams"
   log_interval: 10
 
 Export:
-  weight_path: https://paddledet.bj.bcebos.com/models/ppyoloe_r_crn_l_3x_dota.pdparams
+  weight_path: https://paddle-model-ecology.bj.bcebos.com/paddlex/official_pretrained_model/PP-DocLayout-S_pretrain.pdparams
 
 Predict:
   batch_size: 1
   model_dir: "output/best_model/inference"
-  input: "https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/rotated_object_detection_001.png"
+  input: "https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/layout.jpg"
   kernel_option:
     run_mode: paddle
