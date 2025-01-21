@@ -174,14 +174,12 @@ class BEVFusionModel(BaseModel):
         raise_unsupported_api_error("predict", self.__class__)
 
     def export(self, weight_path, save_dir, **kwargs):
-        # weight_path = abspath(weight_path)
         if not weight_path.startswith("http"):
             weight_path = abspath(weight_path)
         save_dir = abspath(save_dir)
 
         # Update YAML config file
         config = self.config.copy()
-        # config.update_pretrained_weights(weight_path)
 
         # Parse CLI arguments
         cli_args = []

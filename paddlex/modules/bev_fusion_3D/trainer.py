@@ -49,8 +49,6 @@ class BEVFusionTrainer(BaseTrainer):
             self.pdx_config.update_batch_size(self.train_config.batch_size)
         if self.train_config.learning_rate is not None:
             self.pdx_config.update_learning_rate(self.train_config.learning_rate)
-        # if self.train_config.epochs is not None:
-        #     self.pdx_config.update_epochs(self.train_config.epochs)
         if self.train_config.epochs_iters is not None:
             self.pdx_config.update_epochs(self.train_config.epochs_iters)
             epochs_iters = self.train_config.epochs_iters
