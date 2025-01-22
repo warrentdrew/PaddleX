@@ -31,7 +31,6 @@ class BEVDet3DPipeline(BasePipeline):
         device: str = None,
         pp_option: PaddlePredictorOption = None,
         use_hpip: bool = False,
-        hpi_params: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Initializes the class with given configurations and options.
@@ -41,17 +40,17 @@ class BEVDet3DPipeline(BasePipeline):
             device (str): The device to run the prediction on. Default is None.
             pp_option (PaddlePredictorOption): Options for PaddlePaddle predictor. Default is None.
             use_hpip (bool): Whether to use high-performance inference (hpip) for prediction. Defaults to False.
-            hpi_params (Optional[Dict[str, Any]]): HPIP specific parameters. Default is None.
         """
         super().__init__(
-            device=device, pp_option=pp_option, use_hpip=use_hpip, hpi_params=hpi_params
-        )
+            device=device, pp_option=pp_option, use_hpip=use_hpip)
 
         bev_detection_3d_model_config = config["SubModules"]["BEVDetection3D"]
         self.bev_detection_3d_model = self.create_model(bev_detection_3d_model_config)
 
     def predict(
-        self, input: str | list[str] | np.ndarray | list[np.ndarray], **kwargs
+        self,
+        input: Union[str, List[str], np.ndarray, List[np.ndarray]],
+        **kwargs,
     ) -> BEV3DDetResult:
         """Predicts 3D detection results for the given input.
 
