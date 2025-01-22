@@ -117,7 +117,7 @@ class InstanceSegPredictor(DetPredictor):
             dict: A dictionary containing the input path, raw image, box and mask
                 for every instance of the batch. Keys include 'input_path', 'input_img', 'boxes' and 'masks'.
         """
-        datas = batch_data
+        datas = batch_data.instances
         # preprocess
         for pre_op in self.pre_ops[:-1]:
             datas = pre_op(datas)
@@ -146,7 +146,8 @@ class InstanceSegPredictor(DetPredictor):
         )
 
         return {
-            "input_path": [data.get("img_path", None) for data in datas],
+            "input_path": batch_data.input_paths,
+            "page_index": batch_data.page_indexes,
             "input_img": [data["ori_img"] for data in datas],
             "boxes": [result["boxes"] for result in boxes_masks],
             "masks": [result["masks"] for result in boxes_masks],
@@ -170,7 +171,7 @@ class InstanceSegPredictor(DetPredictor):
         box_idx_start = 0
         pred_box = []
 
-        if isinstance(pred, list) and len(pred[0]) == 4:
+        if isinstance(pred[0], list) and len(pred[0]) == 4:
             # Adapt to SOLOv2, which only support prediction with a batch_size of 1.
             pred_class_id = [[pred_[1], pred_[2]] for pred_ in pred]
             pred_mask = [pred_[3] for pred_ in pred]
@@ -181,7 +182,7 @@ class InstanceSegPredictor(DetPredictor):
                 }
                 for i in range(len(pred_class_id))
             ]
-        if isinstance(pred, list) and len(pred[0]) == 3:
+        if isinstance(pred[0], list) and len(pred[0]) == 3:
             # Adapt to PP-YOLOE_seg-S, which only support prediction with a batch_size of 1.
             return [
                 {"boxes": np.array(pred[i][0]), "masks": np.array(pred[i][2])}

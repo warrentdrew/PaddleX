@@ -12,15 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .base_operator import BaseOperator
-import numpy as np
-from ....utils.io import ImageReader
+from typing import Tuple, List
 import copy
+import numpy as np
 import cv2
-from .seal_det_warp import AutoRectifier
 from shapely.geometry import Polygon
 from numpy.linalg import norm
-from typing import Tuple
+from .base_operator import BaseOperator
+from ....utils.io import ImageReader
+from .seal_det_warp import AutoRectifier
 
 
 class CropByBoxes(BaseOperator):
@@ -32,7 +32,7 @@ class CropByBoxes(BaseOperator):
         """Initializes the class."""
         super().__init__()
 
-    def __call__(self, img: np.ndarray, boxes: list[dict]) -> list[dict]:
+    def __call__(self, img: np.ndarray, boxes: List[dict]) -> List[dict]:
         """
         Process the input image and bounding boxes to produce a list of cropped images
         with their corresponding bounding box coordinates and labels.
@@ -74,7 +74,7 @@ class CropByPolys(BaseOperator):
         super().__init__()
         self.det_box_type = det_box_type
 
-    def __call__(self, img: np.ndarray, dt_polys: list[list]) -> list[dict]:
+    def __call__(self, img: np.ndarray, dt_polys: List[list]) -> List[dict]:
         """
         Call method to crop images based on detection boxes.
 
@@ -187,7 +187,7 @@ class CropByPolys(BaseOperator):
 
     def reorder_poly_edge(
         self, points: np.ndarray
-    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Get the respective points composing head edge, tail edge, top
         sideline and bottom sideline.
 
@@ -239,7 +239,7 @@ class CropByPolys(BaseOperator):
 
     def find_head_tail(
         self, points: np.ndarray, orientation_thr: float
-    ) -> tuple[list, list]:
+    ) -> Tuple[list, list]:
         """Find the head edge and tail edge of a text polygon.
 
         Args:
@@ -370,7 +370,7 @@ class CropByPolys(BaseOperator):
 
     def get_minarea_rect(
         self, img: np.ndarray, points: np.ndarray
-    ) -> tuple[np.ndarray, list]:
+    ) -> Tuple[np.ndarray, list]:
         """
         Get the minimum area rectangle for the given points and crop the image accordingly.
 

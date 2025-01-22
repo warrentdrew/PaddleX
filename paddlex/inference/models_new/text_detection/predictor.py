@@ -45,9 +45,7 @@ class TextDetPredictor(BasicPredictor):
         limit_type: Union[str, None] = None,
         thresh: Union[float, None] = None,
         box_thresh: Union[float, None] = None,
-        max_candidates: Union[int, None] = None,
         unclip_ratio: Union[float, None] = None,
-        use_dilation: Union[bool, None] = None,
         *args,
         **kwargs
     ):
@@ -57,9 +55,7 @@ class TextDetPredictor(BasicPredictor):
         self.limit_type = limit_type
         self.thresh = thresh
         self.box_thresh = box_thresh
-        self.max_candidates = max_candidates
         self.unclip_ratio = unclip_ratio
-        self.use_dilation = use_dilation
         self.pre_tfs, self.infer, self.post_op = self._build()
 
     def _build_batch_sampler(self):
@@ -96,12 +92,10 @@ class TextDetPredictor(BasicPredictor):
         limit_type: Union[str, None] = None,
         thresh: Union[float, None] = None,
         box_thresh: Union[float, None] = None,
-        max_candidates: Union[int, None] = None,
         unclip_ratio: Union[float, None] = None,
-        use_dilation: Union[bool, None] = None,
     ):
 
-        batch_raw_imgs = self.pre_tfs["Read"](imgs=batch_data)
+        batch_raw_imgs = self.pre_tfs["Read"](imgs=batch_data.instances)
         batch_imgs, batch_shapes = self.pre_tfs["Resize"](
             imgs=batch_raw_imgs,
             limit_side_len=limit_side_len or self.limit_side_len,
@@ -116,12 +110,11 @@ class TextDetPredictor(BasicPredictor):
             batch_shapes,
             thresh=thresh or self.thresh,
             box_thresh=box_thresh or self.box_thresh,
-            max_candidates=max_candidates or self.max_candidates,
             unclip_ratio=unclip_ratio or self.unclip_ratio,
-            use_dilation=use_dilation or self.use_dilation,
         )
         return {
-            "input_path": batch_data,
+            "input_path": batch_data.input_paths,
+            "page_index": batch_data.page_indexes,
             "input_img": batch_raw_imgs,
             "dt_polys": polys,
             "dt_scores": scores,
@@ -179,10 +172,9 @@ class TextDetPredictor(BasicPredictor):
             return DBPostProcess(
                 thresh=self.thresh or kwargs.get("thresh", 0.3),
                 box_thresh=self.box_thresh or kwargs.get("box_thresh", 0.6),
-                max_candidates=self.max_candidates
-                or kwargs.get("max_candidates", 1000),
                 unclip_ratio=self.unclip_ratio or kwargs.get("unclip_ratio", 2.0),
-                use_dilation=self.use_dilation or kwargs.get("use_dilation", False),
+                max_candidates=kwargs.get("max_candidates", 1000),
+                use_dilation=kwargs.get("use_dilation", False),
                 score_mode=kwargs.get("score_mode", "fast"),
                 box_type=kwargs.get("box_type", "quad"),
             )

@@ -107,7 +107,7 @@ class ImageFeaturePredictor(BasicPredictor):
         Returns:
             dict: A dictionary containing the input path, raw image, class IDs, scores, and label names for every instance of the batch. Keys include 'input_path', 'input_img', 'class_ids', 'scores', and 'label_names'.
         """
-        batch_raw_imgs = self.preprocessors["Read"](imgs=batch_data)
+        batch_raw_imgs = self.preprocessors["Read"](imgs=batch_data.instances)
         batch_imgs = self.preprocessors["Resize"](imgs=batch_raw_imgs)
         batch_imgs = self.preprocessors["Normalize"](imgs=batch_imgs)
         batch_imgs = self.preprocessors["ToCHW"](imgs=batch_imgs)
@@ -115,7 +115,8 @@ class ImageFeaturePredictor(BasicPredictor):
         batch_preds = self.infer(x=x)
         features = self.postprocessors["NormalizeFeatures"](batch_preds)
         return {
-            "input_path": batch_data,
+            "input_path": batch_data.input_paths,
+            "page_index": batch_data.page_indexes,
             "input_img": batch_raw_imgs,
             "feature": features,
         }
@@ -144,7 +145,6 @@ class ImageFeaturePredictor(BasicPredictor):
         channel_num=3,
     ):
         assert channel_num == 3
-        assert order == "hwc"
         return "Normalize", Normalize(scale=scale, mean=mean, std=std)
 
     @register("ToCHWImage")

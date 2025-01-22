@@ -12,22 +12,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import copy
 import numpy as np
 import cv2
+from pathlib import Path
 
-from ...common.result import BaseCVResult
+from ...common.result import BaseCVResult, StrMixin, JsonMixin
 
 
 class TextDetResult(BaseCVResult):
 
-    def __init__(self, data):
-        super().__init__(data)
+    def _get_input_fn(self):
+        fn = super()._get_input_fn()
+        if (page_idx := self["page_index"]) is not None:
+            fp = Path(fn)
+            stem, suffix = fp.stem, fp.suffix
+            return f"{stem}_{page_idx}{suffix}"
+        else:
+            return fn
 
     def _to_img(self):
         """draw rectangle"""
         boxes = self["dt_polys"]
-        image = self._input_img
+        image = self["input_img"]
         for box in boxes:
             box = np.reshape(np.array(box).astype(int), [-1, 1, 2]).astype(np.int64)
             cv2.polylines(image, [box], True, (0, 0, 255), 2)
-        return image[:, :, ::-1]
+        return {"res": image[:, :, ::-1]}
+
+    def _to_str(self, *args, **kwargs):
+        data = copy.deepcopy(self)
+        data.pop("input_img")
+        return JsonMixin._to_str(data, *args, **kwargs)
+
+    def _to_json(self, *args, **kwargs):
+        data = copy.deepcopy(self)
+        data.pop("input_img")
+        return JsonMixin._to_json(data, *args, **kwargs)

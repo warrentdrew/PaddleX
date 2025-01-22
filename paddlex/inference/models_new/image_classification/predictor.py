@@ -112,9 +112,10 @@ class ClasPredictor(BasicPredictor):
         Returns:
             dict: A dictionary containing the input path, raw image, class IDs, scores, and label names for every instance of the batch. Keys include 'input_path', 'input_img', 'class_ids', 'scores', and 'label_names'.
         """
-        batch_raw_imgs = self.preprocessors["Read"](imgs=batch_data)
+        batch_raw_imgs = self.preprocessors["Read"](imgs=batch_data.instances)
         batch_imgs = self.preprocessors["Resize"](imgs=batch_raw_imgs)
-        batch_imgs = self.preprocessors["Crop"](imgs=batch_imgs)
+        if "Crop" in self.preprocessors:
+            batch_imgs = self.preprocessors["Crop"](imgs=batch_imgs)
         batch_imgs = self.preprocessors["Normalize"](imgs=batch_imgs)
         batch_imgs = self.preprocessors["ToCHW"](imgs=batch_imgs)
         x = self.preprocessors["ToBatch"](imgs=batch_imgs)
@@ -123,7 +124,8 @@ class ClasPredictor(BasicPredictor):
             batch_preds, topk=topk or self.topk
         )
         return {
-            "input_path": batch_data,
+            "input_path": batch_data.input_paths,
+            "page_index": batch_data.page_indexes,
             "input_img": batch_raw_imgs,
             "class_ids": batch_class_ids,
             "scores": batch_scores,
@@ -138,10 +140,18 @@ class ClasPredictor(BasicPredictor):
         assert resize_short or size
         if resize_short:
             op = ResizeByShort(
-                target_short_edge=resize_short, size_divisor=None, interp="LINEAR"
+                target_short_edge=resize_short,
+                size_divisor=None,
+                interp=interpolation,
+                backend=backend,
             )
         else:
-            op = Resize(target_size=size)
+            op = Resize(
+                target_size=size,
+                size_divisor=None,
+                interp=interpolation,
+                backend=backend,
+            )
         return "Resize", op
 
     @register("CropImage")

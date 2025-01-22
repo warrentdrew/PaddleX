@@ -85,7 +85,7 @@ tar -xf ./dataset/widerperson_coco_examples.tar -C ./dataset/
 You can complete data validation with a single command:
 
 ```bash
-python main.py -c paddlex/configs/human_detection/PP-YOLOE-S_human.yaml \
+python main.py -c paddlex/configs/modules/human_detection/PP-YOLOE-S_human.yaml \
     -o Global.mode=check_dataset \
     -o Global.dataset_dir=./dataset/widerperson_coco_examples
 ```
@@ -157,13 +157,13 @@ CheckDataset:
   ......
 </code></pre>
 <p>Then execute the command:</p>
-<pre><code class="language-bash">python main.py -c paddlex/configs/human_detection/PP-YOLOE-S_human.yaml \
+<pre><code class="language-bash">python main.py -c paddlex/configs/modules/human_detection/PP-YOLOE-S_human.yaml \
     -o Global.mode=check_dataset \
     -o Global.dataset_dir=./dataset/widerperson_coco_examples
 </code></pre>
 <p>After dataset splitting, the original annotation files will be renamed to <code>xxx.bak</code> in their original paths.</p>
 <p>The above parameters can also be set by appending command-line arguments:</p>
-<pre><code class="language-bash">python main.py -c paddlex/configs/human_detection/PP-YOLOE-S_human.yaml  \
+<pre><code class="language-bash">python main.py -c paddlex/configs/modules/human_detection/PP-YOLOE-S_human.yaml  \
     -o Global.mode=check_dataset \
     -o Global.dataset_dir=./dataset/widerperson_coco_examples \
     -o CheckDataset.split.enable=True \
@@ -175,7 +175,7 @@ CheckDataset:
 Model training can be completed with a single command, taking the training of `PP-YOLOE-S_human` as an example:
 
 ```bash
-python main.py -c paddlex/configs/human_detection/PP-YOLOE-S_human.yaml \
+python main.py -c paddlex/configs/modules/human_detection/PP-YOLOE-S_human.yaml \
     -o Global.mode=train \
     -o Global.dataset_dir=./dataset/widerperson_coco_examples
 ```
@@ -206,7 +206,7 @@ Other related parameters can be set by modifying the `Global` and `Train` fields
 After completing model training, you can evaluate the specified model weight file on the validation set to verify the model's accuracy. Using PaddleX for model evaluation, you can complete the evaluation with a single command:
 
 ```bash
-python main.py -c paddlex/configs/human_detection/PP-YOLOE-S_human.yaml \
+python main.py -c paddlex/configs/modules/human_detection/PP-YOLOE-S_human.yaml \
     -o Global.mode=evaluate \
     -o Global.dataset_dir=./dataset/widerperson_coco_examples
 ```
@@ -228,7 +228,7 @@ After completing model training and evaluation, you can use the trained model we
 #### 4.4.1 Model Inference
 * To perform inference prediction through the command line, simply use the following command. Before running the following code, please download the [demo image](https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/human_detection.jpg) to your local machine.
 ```bash
-python main.py -c paddlex/configs/human_detection/PP-YOLOE-S_human.yaml \
+python main.py -c paddlex/configs/modules/human_detection/PP-YOLOE-S_human.yaml \
     -o Global.mode=predict \
     -o Predict.model_dir="./output/best_model/inference" \
     -o Predict.input="human_detection.jpg"
@@ -242,4 +242,11 @@ Similar to model training and evaluation, the following steps are required:
 Other related parameters can be set by modifying the fields under `Global` and `Predict` in the `.yaml` configuration file. For details, please refer to [PaddleX Common Model Configuration File Parameter Description](../../instructions/config_parameters_common.en.md).
 
 #### 4.4.2 Model Integration
-The weights you produce can be directly integrated into the human detection module. You can refer to the Python sample code in [Quick Integration](#iii-quick-integration) and simply replace the model with the path to your trained model.
+
+1. **Pipeline Integration**
+
+The pedestrian detection module can be integrated into PaddleX pipelines such as [**Human Keypoint Detection**](../../../pipeline_usage/tutorials/cv_pipelines/human_keypoint_detection.en.md). You can update the keypoint detection module in the production line simply by replacing the model path. In production line integration, you can deploy your models using high-performance deployment and service deployment methods.
+
+2. **Module Integration**
+
+The weights you produce can be directly integrated into the pedestrian detection module. You can refer to the Python example code in [Quick Integration](#iii-quick-integration). Simply replace the model with the path to your trained model to complete the integration.

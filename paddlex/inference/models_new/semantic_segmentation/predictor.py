@@ -120,12 +120,12 @@ class SegPredictor(BasicPredictor):
         Returns:
             dict: A dictionary containing the input path, raw image, and predicted segmentation maps for every instance of the batch. Keys include 'input_path', 'input_img', and 'pred'.
         """
-        batch_raw_imgs = self.preprocessors["Read"](imgs=batch_data)
+        batch_raw_imgs = self.preprocessors["Read"](imgs=batch_data.instances)
         batch_imgs = self.preprocessors["Resize"](
             imgs=batch_raw_imgs, target_size=target_size
         )
-        batch_imgs = self.preprocessors["ToCHW"](imgs=batch_imgs)
         batch_imgs = self.preprocessors["Normalize"](imgs=batch_imgs)
+        batch_imgs = self.preprocessors["ToCHW"](imgs=batch_imgs)
         x = self.preprocessors["ToBatch"](imgs=batch_imgs)
         batch_preds = self.infer(x=x)
         if len(batch_data) > 1:
@@ -135,7 +135,8 @@ class SegPredictor(BasicPredictor):
         batch_preds = self.postprocessers(batch_preds, batch_raw_imgs)
 
         return {
-            "input_path": batch_data,
+            "input_path": batch_data.input_paths,
+            "page_index": batch_data.page_indexes,
             "input_img": batch_raw_imgs,
             "pred": batch_preds,
         }

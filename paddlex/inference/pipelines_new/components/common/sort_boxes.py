@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .base_operator import BaseOperator
 import numpy as np
+from typing import List
+from .base_operator import BaseOperator
 
 
 class SortQuadBoxes(BaseOperator):
@@ -25,7 +26,7 @@ class SortQuadBoxes(BaseOperator):
         """Initializes the class."""
         super().__init__()
 
-    def __call__(self, dt_polys: list[np.ndarray]) -> np.ndarray:
+    def __call__(self, dt_polys: List[np.ndarray]) -> np.ndarray:
         """
         Sort quad boxes in order from top to bottom, left to right
         args:
@@ -60,7 +61,7 @@ class SortPolyBoxes(BaseOperator):
         """Initializes the class."""
         super().__init__()
 
-    def __call__(self, dt_polys: list[np.ndarray]) -> np.ndarray:
+    def __call__(self, dt_polys: List[np.ndarray]) -> np.ndarray:
         """
         Sort poly boxes in order from top to bottom, left to right
         args:
