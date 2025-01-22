@@ -56,7 +56,7 @@ class BasePredictor(ABC):
 
     MODEL_FILE_PREFIX = "inference"
 
-    def __init__(self, model_dir: str, config: dict = None) -> None:
+    def __init__(self, model_dir: str, config: Dict = None) -> None:
         """Initializes the BasePredictor.
 
         Args:
@@ -106,7 +106,7 @@ class BasePredictor(ABC):
         return model_dir / f"{cls.MODEL_FILE_PREFIX}.yml"
 
     @classmethod
-    def load_config(cls, model_dir) -> dict:
+    def load_config(cls, model_dir) -> Dict:
         """Load the configuration from the specified model directory.
 
         Args:
@@ -119,12 +119,12 @@ class BasePredictor(ABC):
         return yaml_reader.read(cls.get_config_path(model_dir))
 
     @abstractmethod
-    def __call__(self, input: Any, **kwargs: dict[str, Any]) -> Iterator[Any]:
+    def __call__(self, input: Any, **kwargs: Dict[str, Any]) -> Iterator[Any]:
         """Predict with the given input and additional keyword arguments."""
         raise NotImplementedError
 
     @abstractmethod
-    def set_predictor(self) -> None:
+    def set_predictor(self, batch_size: int = None, device: str = None, *args) -> None:
         """Sets up the predictor."""
         raise NotImplementedError
 

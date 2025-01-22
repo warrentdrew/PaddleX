@@ -33,10 +33,19 @@ from ....utils.file_interface import custom_open
 
 
 class FormulaRecResult(BaseCVResult):
+    def _get_input_fn(self):
+        fn = super()._get_input_fn()
+        if (page_idx := self["page_index"]) is not None:
+            fp = Path(fn)
+            stem, suffix = fp.stem, fp.suffix
+            return f"{stem}_{page_idx}{suffix}"
+        else:
+            return fn
+
     def _to_str(self, *args, **kwargs):
         data = copy.deepcopy(self)
         data.pop("input_img")
-        _str = StrMixin._to_str(data, *args, **kwargs)["res"].replace("\\\\", "\\")
+        _str = JsonMixin._to_str(data, *args, **kwargs)["res"]
         return {"res": _str}
 
     def _to_json(self, *args, **kwargs):

@@ -43,10 +43,10 @@ class MLClasPredictor(ClasPredictor):
         super().__init__(*args, **kwargs)
 
     def _get_result_class(self) -> type:
-        """Returns the result class, TopkResult.
+        """Returns the result class, MLClassResult.
 
         Returns:
-            type: The TopkResult class.
+            type: The MLClassResult class.
         """
 
         return MLClassResult
@@ -66,7 +66,7 @@ class MLClasPredictor(ClasPredictor):
         Returns:
             dict: A dictionary containing the input path, raw image, class IDs, scores, and label names for every instance of the batch. Keys include 'input_path', 'input_img', 'class_ids', 'scores', and 'label_names'.
         """
-        batch_raw_imgs = self.preprocessors["Read"](imgs=batch_data)
+        batch_raw_imgs = self.preprocessors["Read"](imgs=batch_data.instances)
         batch_imgs = self.preprocessors["Resize"](imgs=batch_raw_imgs)
         batch_imgs = self.preprocessors["Normalize"](imgs=batch_imgs)
         batch_imgs = self.preprocessors["ToCHW"](imgs=batch_imgs)
@@ -74,9 +74,13 @@ class MLClasPredictor(ClasPredictor):
         batch_preds = self.infer(x=x)
         batch_class_ids, batch_scores, batch_label_names = self.postprocessors[
             "MultiLabelThreshOutput"
-        ](preds=batch_preds, threshold=threshold or self.threshold)
+        ](
+            preds=batch_preds,
+            threshold=self.threshold if threshold is None else threshold,
+        )
         return {
-            "input_path": batch_data,
+            "input_path": batch_data.input_paths,
+            "page_index": batch_data.page_indexes,
             "input_img": batch_raw_imgs,
             "class_ids": batch_class_ids,
             "scores": batch_scores,

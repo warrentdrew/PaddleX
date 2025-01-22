@@ -25,8 +25,14 @@ from ...common.result import BaseCVResult, StrMixin, JsonMixin
 class TableRecResult(BaseCVResult):
     """SaveTableResults"""
 
-    def __init__(self, data):
-        super().__init__(data)
+    def _get_input_fn(self):
+        fn = super()._get_input_fn()
+        if (page_idx := self["page_index"]) is not None:
+            fp = Path(fn)
+            stem, suffix = fp.stem, fp.suffix
+            return f"{stem}_{page_idx}{suffix}"
+        else:
+            return fn
 
     def _to_img(self):
         image = self["input_img"]
@@ -56,7 +62,7 @@ class TableRecResult(BaseCVResult):
     def _to_str(self, *args, **kwargs):
         data = copy.deepcopy(self)
         data.pop("input_img")
-        return StrMixin._to_str(data, *args, **kwargs)
+        return JsonMixin._to_str(data, *args, **kwargs)
 
     def _to_json(self, *args, **kwargs):
         data = copy.deepcopy(self)
