@@ -41,16 +41,17 @@ comments: true
 
 ```python
 from paddlex import create_model
-model = create_model("BEVFusion")
-output = model.predict("nuscenes_infos_val.pkl", batch_size=1)
+model = create_model(model_name="BEVFusion")
+output = model.predict(input="nuscenes_infos_val.pkl", batch_size=1)
 for res in output:
-    res.print(json_format=False)
-    res.save_to_json("./output/")
+    res.print()
+    res.save_to_json(save_path="./output/res.json")
 ```
 
 运行后，得到的结果为：
 ```bash
-{
+{"res":
+  {
     'input_path': 'samples/LIDAR_TOP/n015-2018-10-08-15-36-50+0800__LIDAR_TOP__1538984253447765.pcd.bin',
     'sample_id': 'b4ff30109dd14c89b24789dc5713cf8c',
     'input_img_paths': [
@@ -80,6 +81,7 @@ for res in output:
     "scores_3d": [
         0.9920279383659363
     ]
+  }
 }
 ```
 
@@ -266,7 +268,6 @@ python main.py -c paddlex/configs/modules/bev_fusion_3D/bevf_pp_2x8_1x_nusc.yaml
 
 <p>校验结果文件具体内容为：</p>
 <pre><code class="language-bash">{
-{
   &quot;done_flag&quot;: true,
   &quot;check_pass&quot;: true,
   &quot;attributes&quot;: {
@@ -307,8 +308,9 @@ python main.py -c paddlex/configs/modules/bev_fusion_3D/bevf_pp_2x8_1x_nusc.yaml
   &quot;show_type&quot;: &quot;path for images and lidar&quot;,
   &quot;dataset_type&quot;: &quot;NuscenesMMDataset&quot;
 }
-}
-<p>上述校验结果中，check_pass 为 True 表示数据集格式符合要求。</p>
+</code></pre>
+<p>上述校验结果中，check_pass 为 true 表示数据集格式符合要求</p>
+</details>
 
 #### 4.1.3 数据集格式转换/数据集划分（可选）
 在您完成数据校验之后，可以通过<b>修改配置文件</b>或是<b>追加超参数</b>的方式对数据集的格式进行转换，也可以对数据集的训练/验证比例进行重新划分。
