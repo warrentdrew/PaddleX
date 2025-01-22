@@ -34,11 +34,19 @@ cv2_interp_codes = {
 
 
 class LoadPointsFromFile:
-    """Load Points From File."""
+    """Load points from a file and process them according to specified parameters."""
 
     def __init__(
         self, load_dim=6, use_dim=[0, 1, 2], shift_height=False, use_color=False
     ):
+        """Initializes the LoadPointsFromFile object.
+
+        Args:
+            load_dim (int): Dimensions loaded in points.
+            use_dim (list or int): Dimensions used in points. If int, will use a range from 0 to use_dim (exclusive).
+            shift_height (bool): Whether to shift height values.
+            use_color (bool): Whether to include color attributes in the loaded points.
+        """
         self.shift_height = shift_height
         self.use_color = use_color
         if isinstance(use_dim, int):
@@ -51,13 +59,26 @@ class LoadPointsFromFile:
         self.use_dim = use_dim
 
     def _load_points(self, pts_filename):
-        """Private function to load point clouds data."""
+        """Private function to load point clouds data from a file.
 
+        Args:
+            pts_filename (str): Path to the point cloud file.
+
+        Returns:
+            numpy.ndarray: Loaded point cloud data.
+        """
         points = np.fromfile(pts_filename, dtype=np.float32)
         return points
 
     def __call__(self, results):
-        """Call function to load points data from file."""
+        """Call function to load points data from file and process it.
+
+        Args:
+            results (dict): Dictionary containing the 'pts_filename' key with the path to the point cloud file.
+
+        Returns:
+            dict: Updated results dictionary with 'points' key added.
+        """
         pts_filename = results["pts_filename"]
         points = self._load_points(pts_filename)
         points = points.reshape(-1, self.load_dim)
@@ -92,23 +113,7 @@ class LoadPointsFromFile:
 
 
 class LoadPointsFromMultiSweeps(object):
-    """Load points from multiple sweeps.
-
-    This is usually used for nuScenes dataset to utilize previous sweeps.
-
-    Args:
-        sweeps_num (int): Number of sweeps. Defaults to 10.
-        load_dim (int): Dimension number of the loaded points. Defaults to 5.
-        use_dim (list[int]): Which dimension to use. Defaults to [0, 1, 2, 4].
-            for more details. Defaults to dict(backend='disk').
-        pad_empty_sweeps (bool): Whether to repeat keyframe when
-            sweeps is empty. Defaults to False.
-        remove_close (bool): Whether to remove close points.
-            Defaults to False.
-        test_mode (bool): If test_model=True used for testing, it will not
-            randomly sample sweeps but select the nearest N frames.
-            Defaults to False.
-    """
+    """Load points from multiple sweeps.This is usually used for nuScenes dataset to utilize previous sweeps."""
 
     def __init__(
         self,
@@ -120,6 +125,20 @@ class LoadPointsFromMultiSweeps(object):
         test_mode=False,
         point_cloud_angle_range=None,
     ):
+        """Initializes the LoadPointsFromMultiSweeps object
+        Args:
+            sweeps_num (int): Number of sweeps. Defaults to 10.
+            load_dim (int): Dimension number of the loaded points. Defaults to 5.
+            use_dim (list[int]): Which dimension to use. Defaults to [0, 1, 2, 4].
+                for more details. Defaults to dict(backend='disk').
+            pad_empty_sweeps (bool): Whether to repeat keyframe when
+                sweeps is empty. Defaults to False.
+            remove_close (bool): Whether to remove close points.
+                Defaults to False.
+            test_mode (bool): If test_model=True used for testing, it will not
+                randomly sample sweeps but select the nearest N frames.
+                Defaults to False.
+        """
         self.load_dim = load_dim
         self.sweeps_num = sweeps_num
         self.use_dim = use_dim
@@ -168,6 +187,17 @@ class LoadPointsFromMultiSweeps(object):
         return points[not_close]
 
     def filter_point_by_angle(self, points):
+        """
+        Filters points based on their angle in relation to the origin.
+
+        Args:
+            points (np.ndarray): An array of points with shape (N, 2), where each row
+                is a point in 2D space.
+
+        Returns:
+            np.ndarray: A filtered array of points that fall within the specified
+                angle range.
+        """
         if isinstance(points, np.ndarray):
             points_numpy = points
         else:
@@ -246,17 +276,7 @@ class LoadPointsFromMultiSweeps(object):
 
 
 class LoadMultiViewImageFromFiles:
-    """
-    load multi-view image from files
-
-    Args:
-        to_float32 (bool): Whether to convert the img to float32.
-            Default: False.
-        color_type (str): Color type of the file. Default: -1.
-            - -1: cv2.IMREAD_UNCHANGED
-            -  0: cv2.IMREAD_GRAYSCALE
-            -  1: cv2.IMREAD_COLOR
-    """
+    """Load multi-view images from files."""
 
     def __init__(
         self,
@@ -266,6 +286,19 @@ class LoadMultiViewImageFromFiles:
         constant_std=0.5,
         imread_flag=-1,
     ):
+        """
+        Initializes the LoadMultiViewImageFromFiles object.
+        Args:
+            to_float32 (bool): Whether to convert the loaded images to float32. Default: False.
+            project_pts_to_img_depth (bool): Whether to project points to image depth. Default: False.
+            cam_depth_range (list): Camera depth range in the format [min, max, focal]. Default: [4.0, 45.0, 1.0].
+            constant_std (float): Constant standard deviation for normalization. Default: 0.5.
+            imread_flag (int): Flag determining the color type of the loaded image.
+                - -1: cv2.IMREAD_UNCHANGED
+                -  0: cv2.IMREAD_GRAYSCALE
+                -  1: cv2.IMREAD_COLOR
+                Default: -1.
+        """
         self.to_float32 = to_float32
         self.project_pts_to_img_depth = project_pts_to_img_depth
         self.cam_depth_range = cam_depth_range
@@ -274,7 +307,13 @@ class LoadMultiViewImageFromFiles:
 
     def __call__(self, sample):
         """
-        Call function to load multi-view image from files.
+        Call method to load multi-view image from files and update the sample dictionary.
+
+        Args:
+            sample (dict): Dictionary containing the image filename key.
+
+        Returns:
+            dict: Updated sample dictionary with loaded images and additional information.
         """
         filename = sample["img_filename"]
 
@@ -315,6 +354,17 @@ class ResizeImage:
         backend="cv2",
         override=False,
     ):
+        """Initializes the ResizeImage object.
+
+        Args:
+            img_scale (list or int, optional): The scale of the image. If a single integer is provided, it will be converted to a list. Defaults to None.
+            multiscale_mode (str): The mode for multiscale resizing. Can be "value" or "range". Defaults to "range".
+            ratio_range (list, optional): The range of image aspect ratios. Only used when img_scale is a single value. Defaults to None.
+            keep_ratio (bool): Whether to keep the aspect ratio when resizing. Defaults to True.
+            bbox_clip_border (bool): Whether to clip the bounding box to the image border. Defaults to True.
+            backend (str): The backend to use for image resizing. Can be "cv2". Defaults to "cv2".
+            override (bool): Whether to override certain resize parameters. Note: This option needs refactoring. Defaults to False.
+        """
         if img_scale is None:
             self.img_scale = None
         else:
@@ -340,14 +390,31 @@ class ResizeImage:
 
     @staticmethod
     def random_select(img_scales):
-        """Randomly select an img_scale from given candidates."""
+        """Randomly select an img_scale from the given list of candidates.
+
+        Args:
+            img_scales (list): A list of image scales to choose from.
+
+        Returns:
+            tuple: A tuple containing the selected image scale and its index in the list.
+        """
         scale_idx = np.random.randint(len(img_scales))
         img_scale = img_scales[scale_idx]
         return img_scale, scale_idx
 
     @staticmethod
     def random_sample(img_scales):
-        """Randomly sample an img_scale when ``multiscale_mode=='range'``."""
+        """
+        Randomly sample an img_scale when `multiscale_mode` is set to 'range'.
+
+        Args:
+            img_scales (list of tuples): A list of tuples, where each tuple contains
+                the minimum and maximum scale dimensions for an image.
+
+        Returns:
+            tuple: A tuple containing the randomly sampled img_scale (long_edge, short_edge)
+                and None (to maintain function signature compatibility).
+        """
         img_scale_long = [max(s) for s in img_scales]
         img_scale_short = [min(s) for s in img_scales]
         long_edge = np.random.randint(min(img_scale_long), max(img_scale_long) + 1)
@@ -357,7 +424,19 @@ class ResizeImage:
 
     @staticmethod
     def random_sample_ratio(img_scale, ratio_range):
-        """Randomly sample an img_scale when ``ratio_range`` is specified."""
+        """
+        Randomly sample an img_scale based on the specified ratio_range.
+
+        Args:
+            img_scale (list): A list of two integers representing the minimum and maximum
+                scale for the image.
+            ratio_range (tuple): A tuple of two floats representing the minimum and maximum
+                ratio for sampling the img_scale.
+
+        Returns:
+            tuple: A tuple containing the sampled scale (as a tuple of two integers)
+                and None.
+        """
 
         assert isinstance(img_scale, list) and len(img_scale) == 2
         min_ratio, max_ratio = ratio_range
@@ -367,8 +446,13 @@ class ResizeImage:
         return scale, None
 
     def _random_scale(self, results):
-        """Randomly sample an img_scale according to ``ratio_range`` and
-        ``multiscale_mode``.
+        """Randomly sample an img_scale according to `ratio_range` and `multiscale_mode`.
+
+        Args:
+            results (dict): A dictionary to store the sampled scale and its index.
+
+        Returns:
+            None. The sampled scale and its index are stored in `results` dictionary.
         """
 
         if self.ratio_range is not None:
@@ -388,7 +472,14 @@ class ResizeImage:
         results["scale_idx"] = scale_idx
 
     def _resize_img(self, results):
-        """Resize images with ``results['scale']``."""
+        """Resize images based on the scale factor provided in ``results['scale']`` while maintaining the aspect ratio if ``self.keep_ratio`` is True.
+
+        Args:
+            results (dict): A dictionary containing image fields and their corresponding scales.
+
+        Returns:
+            None. The ``results`` dictionary is modified in place with resized images and additional fields like `img_shape`, `pad_shape`, `scale_factor`, and `keep_ratio`.
+        """
         for key in results.get("img_fields", ["img"]):
             for idx in range(len(results["img"])):
                 if self.keep_ratio:
@@ -417,7 +508,18 @@ class ResizeImage:
             results["keep_ratio"] = self.keep_ratio
 
     def rescale_size(self, old_size, scale, return_scale=False):
-        """Calculate the new size to be rescaled to."""
+        """
+        Calculate the new size to be rescaled to based on the given scale.
+
+        Args:
+            old_size (tuple): A tuple containing the width and height of the original size.
+            scale (float, int, or list of int): The scale factor or a list of integers representing the maximum and minimum allowed size.
+            return_scale (bool): Whether to return the scale factor along with the new size.
+
+        Returns:
+            tuple: A tuple containing the new size and optionally the scale factor if return_scale is True.
+
+        """
         w, h = old_size
         if isinstance(scale, (float, int)):
             if scale <= 0:
@@ -448,7 +550,18 @@ class ResizeImage:
     def imrescale(
         self, img, scale, return_scale=False, interpolation="bilinear", backend=None
     ):
-        """Resize image while keeping the aspect ratio."""
+        """Resize image while keeping the aspect ratio.
+
+        Args:
+            img (numpy.ndarray): The input image.
+            scale (float): The scaling factor.
+            return_scale (bool): Whether to return the scaling factor along with the resized image.
+            interpolation (str): The interpolation method to use. Defaults to 'bilinear'.
+            backend (str): The backend to use for resizing. Defaults to None.
+
+        Returns:
+            tuple or numpy.ndarray: The resized image, and optionally the scaling factor.
+        """
         h, w = img.shape[:2]
         new_size, scale_factor = self.rescale_size((w, h), scale, return_scale=True)
         rescaled_img = self.imresize(
@@ -468,7 +581,19 @@ class ResizeImage:
         out=None,
         backend=None,
     ):
-        """Resize image to a given size."""
+        """Resize an image to a given size.
+
+        Args:
+            img (numpy.ndarray): The input image to be resized.
+            size (tuple): The new size for the image as (height, width).
+            return_scale (bool): Whether to return the scaling factors along with the resized image.
+            interpolation (str): The interpolation method to use. Default is 'bilinear'.
+            out (numpy.ndarray, optional): Output array. If provided, it must have the same shape and dtype as the output array.
+            backend (str, optional): The backend to use for resizing. Supported backends are 'cv2' and 'pillow'.
+
+        Returns:
+            numpy.ndarray or tuple: The resized image. If return_scale is True, returns a tuple containing the resized image and the scaling factors (w_scale, h_scale).
+        """
         h, w = img.shape[:2]
         if backend not in ["cv2", "pillow"]:
             raise ValueError(
@@ -490,7 +615,11 @@ class ResizeImage:
             return resized_img, w_scale, h_scale
 
     def _resize_bboxes(self, results):
-        """Resize bounding boxes with ``results['scale_factor']``."""
+        """Resize bounding boxes with `results['scale_factor']`.
+
+        Args:
+            results (dict): A dictionary containing the bounding boxes and other related information.
+        """
         for key in results.get("bbox_fields", []):
             bboxes = results[key] * results["scale_factor"]
             if self.bbox_clip_border:
@@ -508,8 +637,13 @@ class ResizeImage:
         raise NotImplementedError
 
     def __call__(self, results):
-        """Call function to resize images, bounding boxes, masks, semantic
-        segmentation map.
+        """Call function to resize images, bounding boxes, masks, and semantic segmentation maps according to the provided scale or scale factor.
+
+        Args:
+            results (dict): A dictionary containing the input data, including 'img', 'scale', and optionally 'scale_factor'.
+
+        Returns:
+            dict: A dictionary with the resized data.
         """
         if "scale" not in results:
             if "scale_factor" in results:
@@ -540,12 +674,32 @@ class ResizeImage:
 class NormalizeImage:
     """Normalize the image."""
 
+    """Normalize an image by subtracting the mean and dividing by the standard deviation.
+
+    Args:
+        mean (list or tuple): Mean values for each channel.
+        std (list or tuple): Standard deviation values for each channel.
+        to_rgb (bool): Whether to convert the image from BGR to RGB.
+    """
+
     def __init__(self, mean, std, to_rgb=True):
+        """Initializes the NormalizeImage class with mean, std, and to_rgb parameters."""
         self.mean = np.array(mean, dtype=np.float32)
         self.std = np.array(std, dtype=np.float32)
         self.to_rgb = to_rgb
 
     def _imnormalize(self, img, mean, std, to_rgb=True):
+        """Normalize the given image inplace.
+
+        Args:
+            img (numpy.ndarray): The image to normalize.
+            mean (numpy.ndarray): Mean values for normalization.
+            std (numpy.ndarray): Standard deviation values for normalization.
+            to_rgb (bool): Whether to convert the image from BGR to RGB.
+
+        Returns:
+            numpy.ndarray: The normalized image.
+        """
         img = img.copy().astype(np.float32)
         mean = np.float64(mean.reshape(1, -1))
         stdinv = 1 / np.float64(std.reshape(1, -1))
@@ -556,7 +710,14 @@ class NormalizeImage:
         return img
 
     def __call__(self, results):
-        """Call function to normalize images."""
+        """Call method to normalize images in the results dictionary.
+
+        Args:
+            results (dict): A dictionary containing image fields to normalize.
+
+        Returns:
+            dict: The results dictionary with normalized images.
+        """
         for key in results.get("img_fields", ["img"]):
             if key == "img_depth":
                 continue
@@ -582,8 +743,22 @@ class PadImage(object):
     def impad(
         self, img, *, shape=None, padding=None, pad_val=0, padding_mode="constant"
     ):
-        """Pad the given image to a certain shape or pad on all sides with
-        specified padding mode and padding value.
+        """Pad the given image to a certain shape or pad on all sides
+
+        Args:
+            img (numpy.ndarray): The input image to be padded.
+            shape (tuple, optional): Desired output shape in the form (height, width). One of shape or padding must be specified.
+            padding (int, tuple, optional): Number of pixels to pad on each side of the image. If a single int is provided this
+                is used to pad all sides with this value. If a tuple of length 2 is provided this is interpreted as (top_bottom, left_right).
+                If a tuple of length 4 is provided this is interpreted as (top, right, bottom, left).
+            pad_val (int, list, optional): Pixel value used for padding. If a list is provided, it must have the same length as the
+                last dimension of the input image. Defaults to 0.
+            padding_mode (str, optional): Padding mode to use. One of 'constant', 'edge', 'reflect', 'symmetric'.
+                Defaults to 'constant'.
+
+        Returns:
+            numpy.ndarray: The padded image.
+
         """
 
         assert (shape is not None) ^ (padding is not None)
@@ -632,13 +807,29 @@ class PadImage(object):
         return img
 
     def impad_to_multiple(self, img, divisor, pad_val=0):
-        """Pad an image to ensure each edge to be multiple to some number."""
+        """
+        Pad an image to ensure each edge length is a multiple of a given number.
+
+        Args:
+            img (numpy.ndarray): The input image.
+            divisor (int): The number to which each edge length should be a multiple.
+            pad_val (int, optional): The value to pad the image with. Defaults to 0.
+
+        Returns:
+            numpy.ndarray: The padded image.
+        """
         pad_h = int(np.ceil(img.shape[0] / divisor)) * divisor
         pad_w = int(np.ceil(img.shape[1] / divisor)) * divisor
         return self.impad(img, shape=(pad_h, pad_w), pad_val=pad_val)
 
     def _pad_img(self, results):
-        """Pad images according to ``self.size``."""
+        """
+        Pad images according to ``self.size`` or adjust their shapes to be multiples of ``self.size_divisor``.
+
+        Args:
+            results (dict): A dictionary containing image data, with 'img_fields' as an optional key
+                pointing to a list of image field names.
+        """
         for key in results.get("img_fields", ["img"]):
             if self.size is not None:
                 padded_img = self.impad(
@@ -659,8 +850,7 @@ class PadImage(object):
         raise NotImplementedError
 
     def _pad_seg(self, results):
-        """Pad semantic segmentation map according to
-        ``results['pad_shape']``."""
+        """Pad semantic segmentation map according to ``results['pad_shape']``."""
         raise NotImplementedError
 
     def __call__(self, results):
@@ -701,7 +891,14 @@ class SampleFilterByKey:
         self.meta_keys = meta_keys
 
     def __call__(self, sample):
-        """Call function to filter sample by keys. The keys in ``meta_keys``"""
+        """Call function to filter sample by keys. The keys in `meta_keys` are used to filter metadata from the input sample.
+
+        Args:
+            sample (Sample): The input sample to be filtered.
+
+        Returns:
+            Sample: A new Sample object containing only the filtered metadata and specified keys.
+        """
         filtered_sample = Sample(path=sample.path, modality=sample.modality)
         filtered_sample.meta.id = sample.meta.id
         img_metas = {}
@@ -748,7 +945,15 @@ class GetInferInput:
         return collated_batch
 
     def __call__(self, sample):
-        """Call function to filter sample by keys. The keys in ``meta_keys``"""
+        """Call function to infer input data from transformed sample
+
+        Args:
+            sample (Sample): The input sample data.
+
+        Returns:
+            infer_input (list): A list containing all the input data for inference.
+            sample_id (str): token id of the input sample.
+        """
         if sample.modality == "multimodal" or sample.modality == "multiview":
             if "img" in sample.keys():
                 sample.img = np.stack(
