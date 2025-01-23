@@ -110,8 +110,6 @@ class StaticInfer:
             self._update_option(option)
 
     def _reset(self) -> None:
-        if not self.option:
-            self.option = PaddlePredictorOption()
         logging.debug(f"Env: {self.option}")
         (
             predictor,
@@ -126,9 +124,9 @@ class StaticInfer:
     def _create(
         self,
     ) -> Tuple[
-        paddle.base.libpaddle.PaddleInferPredictor,
-        paddle.base.libpaddle.PaddleInferTensor,
-        paddle.base.libpaddle.PaddleInferTensor,
+        "paddle.base.libpaddle.PaddleInferPredictor",
+        "paddle.base.libpaddle.PaddleInferTensor",
+        "paddle.base.libpaddle.PaddleInferTensor",
     ]:
         """_create"""
         from lazy_paddle.inference import Config, create_predictor
