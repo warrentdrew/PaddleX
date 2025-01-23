@@ -104,7 +104,7 @@ from .face_recognition import (
 
 from .ts_forecast import TSFCDatasetChecker, TSFCTrainer, TSFCEvaluator
 
-from .bev_fusion_3D import (
+from ._3d_bev_detection import (
     BEVFusionDatasetChecker,
     BEVFusionTrainer,
     BEVFusionEvaluator,
