@@ -38,9 +38,7 @@ register_model_info(
     {
         "model_name": "BEVFusion",
         "suite": "BEVFusion",
-        "config_path": osp.join(
-            PDX_CONFIG_DIR, "bevfusion", "bevf_pp_2x8_1x_nusc.yaml"
-        ),
+        "config_path": osp.join(PDX_CONFIG_DIR, "BEVFusion.yaml"),
         "auto_compression_config_path": osp.join(PDX_CONFIG_DIR, "None"),
         "supported_apis": ["train", "evaluate", "export", "infer"],
         "supported_train_opts": {

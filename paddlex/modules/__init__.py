@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from importlib import import_module
 
 from .base import (
     build_dataset_checker,
@@ -104,12 +104,12 @@ from .face_recognition import (
 
 from .ts_forecast import TSFCDatasetChecker, TSFCTrainer, TSFCEvaluator
 
-from ._3d_bev_detection import (
-    BEVFusionDatasetChecker,
-    BEVFusionTrainer,
-    BEVFusionEvaluator,
-    BEVFusionExportor,
-)
+module_3d_bev_detection = import_module(".3d_bev_detection", "paddlex.modules")
+BEVFusionDatasetChecker = getattr(module_3d_bev_detection, "BEVFusionDatasetChecker")
+BEVFusionTrainer = getattr(module_3d_bev_detection, "BEVFusionTrainer")
+BEVFusionEvaluator = getattr(module_3d_bev_detection, "BEVFusionEvaluator")
+BEVFusionExportor = getattr(module_3d_bev_detection, "BEVFusionExportor")
+
 from .keypoint_detection import (
     KeypointDatasetChecker,
     KeypointTrainer,
