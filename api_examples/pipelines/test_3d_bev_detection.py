@@ -14,7 +14,7 @@
 
 from paddlex import create_pipeline
 
-pipeline = create_pipeline(pipeline="bev_detection_3d")
+pipeline = create_pipeline(pipeline="3d_bev_detection")
 output = pipeline.predict("./data/nuscenes/nuscenes_infos_val.pkl")
 
 for res in output:

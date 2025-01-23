@@ -14,6 +14,7 @@
 
 from pathlib import Path
 from typing import Any, Dict, Optional
+from importlib import import_module
 from .base import BasePipeline
 from ..utils.pp_option import PaddlePredictorOption
 from .components import BaseChat, BaseRetriever, BaseGeneratePrompt
@@ -42,7 +43,12 @@ from .semantic_segmentation import SemanticSegmentationPipeline
 from .instance_segmentation import InstanceSegmentationPipeline
 from .small_object__detection import SmallObjectDetectionPipeline
 from .rotated_object__detection import RotatedObjectDetectionPipeline
-from .bev_detection_3d import BEVDet3DPipeline
+
+# from .bev_detection_3d import BEVDet3DPipeline
+module_3d_bev_detection = import_module(
+    ".3d_bev_detection", "paddlex.inference.pipelines_new"
+)
+BEVDet3DPipeline = getattr(module_3d_bev_detection, "BEVDet3DPipeline")
 
 
 def get_pipeline_path(pipeline_name: str) -> str:

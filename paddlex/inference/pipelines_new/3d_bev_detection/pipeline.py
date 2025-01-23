@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union, List
 import numpy as np
 from ...utils.pp_option import PaddlePredictorOption
 from ..base import BasePipeline
@@ -41,10 +41,9 @@ class BEVDet3DPipeline(BasePipeline):
             pp_option (PaddlePredictorOption): Options for PaddlePaddle predictor. Default is None.
             use_hpip (bool): Whether to use high-performance inference (hpip) for prediction. Defaults to False.
         """
-        super().__init__(
-            device=device, pp_option=pp_option, use_hpip=use_hpip)
+        super().__init__(device=device, pp_option=pp_option, use_hpip=use_hpip)
 
-        bev_detection_3d_model_config = config["SubModules"]["BEVDetection3D"]
+        bev_detection_3d_model_config = config["SubModules"]["3DBEVDetection"]
         self.bev_detection_3d_model = self.create_model(bev_detection_3d_model_config)
 
     def predict(
