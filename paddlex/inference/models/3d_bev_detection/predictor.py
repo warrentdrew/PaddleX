@@ -13,9 +13,14 @@
 # limitations under the License.
 
 from typing import Any, Union, Dict, List, Tuple
+from importlib import import_module
 
 from ....utils.func_register import FuncRegister
-from ....modules.bev_fusion_3D.model_list import MODELS
+
+module_3d_bev_detection = import_module(".3d_bev_detection", "paddlex.modules")
+module_3d_model_list = getattr(module_3d_bev_detection, "model_list")
+MODELS = getattr(module_3d_model_list, "MODELS")
+
 from ...common.batch_sampler import Det3DBatchSampler
 from ...common.reader import ReadNuscenesData
 from ..common import StaticInfer
