@@ -14,13 +14,20 @@
 
 from typing import Any, Union, Dict, List, Tuple
 from importlib import import_module
+import lazy_paddle
 
+if lazy_paddle.is_compiled_with_cuda():
+    from ....ops.voxelize import hard_voxelize
+    from ....ops.iou3d_nms import nms_gpu
+else:
+    from ....utils import logging
+
+    logging.error("3D BEVFusion custom ops only support GPU platform!")
 from ....utils.func_register import FuncRegister
 
 module_3d_bev_detection = import_module(".3d_bev_detection", "paddlex.modules")
 module_3d_model_list = getattr(module_3d_bev_detection, "model_list")
 MODELS = getattr(module_3d_model_list, "MODELS")
-
 from ...common.batch_sampler import Det3DBatchSampler
 from ...common.reader import ReadNuscenesData
 from ..common import StaticInfer
@@ -36,8 +43,6 @@ from .processors import (
     GetInferInput,
 )
 from .result import BEV3DDetResult
-from ....ops.voxelize import hard_voxelize
-from ....ops.iou3d_nms import nms_gpu
 
 
 class BEVDet3DPredictor(BasicPredictor):
