@@ -16,7 +16,7 @@ from typing import Any, Union, Dict, List, Tuple
 from importlib import import_module
 import lazy_paddle
 
-if lazy_paddle.is_compiled_with_cuda():
+if lazy_paddle.is_compiled_with_cuda() and not lazy_paddle.is_compiled_with_rocm():
     from ....ops.voxelize import hard_voxelize
     from ....ops.iou3d_nms import nms_gpu
 else:
