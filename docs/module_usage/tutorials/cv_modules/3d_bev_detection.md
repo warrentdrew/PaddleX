@@ -349,7 +349,13 @@ python main.py -c paddlex/configs/modules/3d_bev_detection/BEVFusion.yaml \
 
 #### 4.4.1 模型推理
 
-* 通过命令行的方式进行推理预测，只需如下一条命令。运行以下代码前，请您下载[示例输入](https://paddle-model-ecology.bj.bcebos.com/paddlex/det_3d/demo_det_3d/nuscenes_infos_val.pkl)到本地。
+* 通过命令行的方式进行推理预测，只需如下一条命令。运行以下代码前，请您下载并解压[示例数据] (https://paddle-model-ecology.bj.bcebos.com/paddlex/det_3d/demo_det_3d/nuscenes_demo_infer.pkl)到本地。
+* 下载并解压示例数据
+```bash
+wget https://paddle-model-ecology.bj.bcebos.com/paddlex/det_3d/demo_det_3d/nuscenes_demo_infer.tar -P ./dataset
+tar -xf ./dataset/nuscenes_demo_infer.tar -C ./dataset/
+```
+* 运行以下命令即可完成推理预测：
 ```bash
 python main.py -c paddlex/configs/modules/3d_bev_detection/BEVFusion.yaml  \
     -o Global.mode=predict \
