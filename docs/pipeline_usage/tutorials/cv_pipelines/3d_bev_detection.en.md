@@ -55,19 +55,18 @@ tar -xf ./data/nuscenes_demo.tar -C ./data/
 
 #### 2.2.1 Command Line Experience
 
-You can quickly experience the 3D multi-modal fusion detection pipeline with a single command. Use the [test file](https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/general_object_detection_002.png)，and  `--input` replace with the local path for prediction.
+You can quickly experience the 3D multi-modal fusion detection pipeline with a single command. Use the [test file](https://paddle-model-ecology.bj.bcebos.com/paddlex/det_3d/demo_det_3d/nuscenes_demo_infer.tar)，and  `--input` replace with the local path for prediction.
 ```bash
-paddlex --pipeline object_detection \
+paddlex --pipeline 3d_bev_detection \
         --input nuscenes_demo_infer.tar \
         --device gpu:0
 ```
-
 Parameter description:
 
 ```
 --pipeline: The name of the pipeline, here it is the 3D multi-modal fusion detection pipeline.
 
---input: The input path to the .tar file containing image and lidar data to be processed.
+--input: The input path to the .tar file containing image and lidar data to be processed. 3D multi-modal fusion detection pipeline is a multi-input pipeline depending on images, pointclouds and transition matrix information. Tar file contains "samples" directory with all images and pointclouds data, "sweeps" directories with pointclouds data of relative frames and nuscnes_infos_val.pkl file containing relataive data path from "samples" and "sweeps" directories and transition matrix infomation.
 
 --device: The GPU index to be used (e.g., gpu:0 means using the 0th GPU, gpu:1,2 means using the 1st and 2nd GPUs), or you can choose to use CPU (--device cpu).
 ```

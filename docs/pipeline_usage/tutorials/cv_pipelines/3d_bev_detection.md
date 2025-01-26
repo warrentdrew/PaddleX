@@ -50,7 +50,7 @@ PaddleX 所提供的预训练的模型产线均可以快速体验效果，你可
 一行命令即可快速体验3D多模态融合检测产线效果，使用 [测试文件](https://paddle-model-ecology.bj.bcebos.com/paddlex/det_3d/demo_det_3d/nuscenes_demo_infer.tar)，并将 `--input` 替换为本地路径，进行预测
 
 ```bash
-paddlex --pipeline object_detection \
+paddlex --pipeline 3d_bev_detection \
         --input nuscenes_demo_infer.tar \
         --device gpu:0
 ```
@@ -59,7 +59,7 @@ paddlex --pipeline object_detection \
 
 ```
 --pipeline：产线名称，此处为3D多模态融合检测产线
---input：输入的包含点云图像文件的.tar压缩文件的本地路径
+--input：输入的包含点云图像文件的.tar压缩文件的本地路径。3D多模态融合检测为为多输入模型，输入依赖点云、图像以及转换矩阵等其他信息。tar解压文件包含samples路径，sweeps路径和nuscnes_infos_val.pkl文件，其中samples包含当前输入的所有图像和点云数据，sweeps包含关联帧点云数据，nuscnes_infos_val.pkl文件包含所有点云和图像在samples和sweeps下的相对路径以及转换矩阵等相关信息。
 --device 使用的GPU序号（例如gpu:0表示使用第0块GPU，gpu:1,2表示使用第1、2块GPU），也可选择使用CPU（--device cpu）
 ```
 
