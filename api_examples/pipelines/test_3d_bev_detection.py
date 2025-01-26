@@ -15,7 +15,9 @@
 from paddlex import create_pipeline
 
 pipeline = create_pipeline(pipeline="3d_bev_detection")
-output = pipeline.predict("./dataset/nuscenes_demo_infer/nuscenes_infos_val.pkl")
+output = pipeline.predict(
+    "https://paddle-model-ecology.bj.bcebos.com/paddlex/det_3d/demo_det_3d/nuscenes_demo_infer.tar"
+)
 
 for res in output:
     print(res)
