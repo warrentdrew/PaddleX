@@ -55,10 +55,11 @@ tar -xf ./data/nuscenes_demo.tar -C ./data/
 
 #### 2.2.1 Command Line Experience
 
-You can quickly experience the 3D multi-modal fusion detection pipeline with a single command, replacing `--input` with the local path to the pkl file for prediction.
-
+You can quickly experience the 3D multi-modal fusion detection pipeline with a single command. Use the [test file](https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/general_object_detection_002.png)，and  `--input` replace with the local path for prediction.
 ```bash
-paddlex --pipeline 3d_bev_detection --input ./data/nuscenes_demo/nuscenes_infos_val.pkl --device gpu:0
+paddlex --pipeline object_detection \
+        --input nuscenes_demo_infer.tar \
+        --device gpu:0
 ```
 
 Parameter description:
@@ -66,7 +67,7 @@ Parameter description:
 ```
 --pipeline: The name of the pipeline, here it is the 3D multi-modal fusion detection pipeline.
 
---input: The local path to the pkl file to be processed.
+--input: The input path to the .tar file containing image and lidar data to be processed.
 
 --device: The GPU index to be used (e.g., gpu:0 means using the 0th GPU, gpu:1,2 means using the 1st and 2nd GPUs), or you can choose to use CPU (--device cpu).
 ```
@@ -78,7 +79,7 @@ Parameter description:
 from paddlex import create_pipeline
 
 pipeline = create_pipeline(pipeline="3d_bev_detection")
-output = pipeline.predict("./data/nuscenes_demo/nuscenes_infos_val.pkl")
+output = pipeline.predict("nuscenes_demo_infer.tar")
 
 for res in output:
     res.print()  ## Print the structured output of the prediction
@@ -132,11 +133,11 @@ In the above Python script, the following steps are executed:
 <tbody>
 <tr>
 <td>str</td>
-<td><b>pkl file path</b>，e.g., <code>/root/data/anno_file.pkl</code></td>
+<td><b>tar file path</b>，e.g., <code>/root/data/nuscenes_demo_infer.tar</code></td>
 </tr>
 <tr>
 <td>list</td>
-<td><b>List</b>，list elements need to be data of the above type, e.g., <code>["/root/data/anno_file1.pkl", "/root/data/anno_file2.pkl"]</td>
+<td><b>List</b>，list elements need to be data of the above type, e.g., <code>["/root/data/nuscenes_demo_infer1.tar", "/root/data/nuscenes_demo_infer2.tar"]</td>
 </tr>
 </tbody>
 </table>
@@ -182,7 +183,7 @@ from paddlex import create_pipeline
 
 pipeline = create_pipeline(pipeline="./my_path/3d_bev_detection.yaml")
 
-output = pipeline.predict("./data/nuscenes_demo/nuscenes_infos_val.pkl")
+output = pipeline.predict("nuscenes_demo_infer.tar")
 
 for res in output:
     res.print()  ## Print the structured output of the prediction
